@@ -1,3 +1,3 @@
-# Advent of Code 2020 \o/
+# Advent of Code \o/
 
 work in progresssssss
