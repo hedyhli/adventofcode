@@ -1,4 +1,4 @@
-with open("three.txt") as f:
+with open("input.txt") as f:
     li = [list(i.strip()) for i in f.readlines()]
 
 

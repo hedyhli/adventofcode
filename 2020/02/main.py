@@ -1,4 +1,4 @@
-def openfile(fname = "two.txt"):
+def openfile(fname = "input.txt"):
     with open(fname) as f:
         li = [i.strip().split(' ') for i in f.readlines()]
     return li

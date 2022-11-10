@@ -1,7 +1,7 @@
 from itertools import combinations
 
 
-def load_list(fname = "one.txt"):
+def load_list(fname = "input.txt"):
     with open(fname) as f:
         li = [int(i.strip()) for i in f.readlines()]
     return li
