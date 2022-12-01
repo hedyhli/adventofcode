@@ -39,17 +39,25 @@ if __name__ == '__main__':
     with open("input.txt") as f:
         seats = [ i.strip() for i in f.readlines() ]
 
-    # seats = [
-    #     'BFFFBBFRRR',
-    #     'FFFBBBFRRR',
-    #     'BBFFBBFRLL',
-    # ]
-
     seat_IDs = []
 
+    # Part 1
     for seatcode in seats:
         row = get_code(seatcode[:-3])
         col = get_code(seatcode[7:])
         seat_IDs.append(row * 8 + col)
 
-    print(max(seat_IDs))
+    print("Highest seat number was", max(seat_IDs))
+
+    # Part 2
+
+    seat_IDs = sorted(seat_IDs)
+    prev = seat_IDs[0]
+    your_seat = 0
+    for seat_ID in seat_IDs[1:]:
+        if seat_ID - prev > 1:
+            your_seat = seat_ID-1
+            break
+        prev = seat_ID
+
+    print("Your seat was", your_seat)
