@@ -1,4 +1,3 @@
-# ! WIP
 # Binary search! how exciting :D
 
 # First 7 chars
