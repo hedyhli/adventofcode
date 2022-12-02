@@ -1,3 +1,6 @@
 # Advent of Code \o/
 
-work in progresssssss
+setup
+
+- getting input - https://github.com/scarvalhojr/aoc-cli
+- submitting - https://pypi.org/project/advent-of-code-data/
