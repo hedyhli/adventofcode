@@ -7,7 +7,7 @@ setup
 
 the plan (in addition to 2022 daily)
 
-- [ ] 2020 (python) days 1-5
+- [x] 2020 (python) days 1-5
 - [ ] 2020 (python) days 6-10
 - [ ] 2020 (python) days 11-15
 - [ ] 2021 (python) days 1-5
