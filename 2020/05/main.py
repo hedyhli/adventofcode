@@ -49,7 +49,6 @@ if __name__ == '__main__':
     print("Highest seat number was", max(seat_IDs))
 
     # Part 2
-
     seat_IDs = sorted(seat_IDs)
     prev = seat_IDs[0]
     your_seat = 0

@@ -8,7 +8,6 @@ def count_trees(right, down):
 
     for y in range(0, len(li), down):
         if li[y][x % len(li[0])] == '#':
-            # print(li[y], x, li[y][x])
             count += 1
         x += right
     return count

@@ -9,10 +9,27 @@ count = 0
 for group in inp.split('\n\n'):
     ques = set(group.replace('\n', ''))
     count += len(ques)
-    # print(ques)
 
-# submit(count, part="a", year=2020, day=6)
+print(count)
+submit(count, part="a", year=2020, day=6)
 
+
+count = 0
+for group in inp.split('\n\n'):
+    group = group.rstrip()
+    if '\n' not in group:
+        # only 1 person
+        count += len(set(group))
+        continue
+    people = [ set(i) for i in group.split('\n') ]
+    count += len(people[0].intersection(*people[1:]))
+
+print(count)
+submit(count, part="b", year=2020, day=6)
+
+
+####################
+# old implementation
 
 # count = 0
 # for group in inp.split('\n\n'):
@@ -33,19 +50,3 @@ for group in inp.split('\n\n'):
 #                 break
 #     count += len(qlist)
 # print(count)
-
-count = 0
-for group in inp.split('\n\n'):
-    group = group.rstrip()
-    if '\n' not in group:
-        # only 1 person
-        count += len(set(group))
-        # print(group, count)
-        continue
-    people = [ set(i) for i in group.split('\n') ]
-    # print(people, len(people[0].intersection(*people[1:])))
-    count += len(people[0].intersection(*people[1:]))
-    # print(count)
-
-print(count)
-submit(count, part="b", year=2020, day=6)
