@@ -1,28 +1,21 @@
-import string
-from more_itertools import grouper
+from string import ascii_letters as letters; letters = " "+letters
 
+from more_itertools import grouper
 from aocd import submit
 
-letters = string.ascii_letters
-
-
 with open("input.txt") as f:
-    lines = [ i.strip() for i in f.readlines() ]
+    lines = f.read().strip().split('\n')
 
-
-priorities = 0
-for line in lines:
-    half = len(line) // 2
-    both = set(line[:half]) & set(line[half:])
-    for char in both:
-        priorities += letters.find(char) + 1
-    # print(both, priorities)
-
-# print(priorities)
+# part 1
+priorities = sum(letters.find((set(l[:len(l)//2]) & set(l[len(l)//2:])).pop()) for l in lines)
 submit(priorities, year=2022, day=3, part="a")
+# part 2
+priorities = sum(letters.find((set(l1) & set(l2) & set(l3)).pop()) for l1, l2, l3 in grouper(lines, 3))
+submit(priorities, year=2022, day=3, part="b")
 
 
-priorities = 0
+# old implementations
+# part 2
 # items = []
 # for line in lines:
 #     line = line.strip()
@@ -34,9 +27,3 @@ priorities = 0
 #             priorities += letters.find(char) + 1
 #             # print(common, priorities)
 #         items = []
-
-# using more-itertools
-for l1, l2, l3 in grouper(lines, 3):
-    priorities += letters.find( (set(l1) & set(l2) & set(l3)).pop()) + 1
-
-submit(priorities, year=2022, day=3, part="b")
