@@ -9,9 +9,9 @@ for l in a.splitlines()[::-1]:
     for m in re.finditer("\[(\w)\]", l):
         c[m.span()[0]//4] += (m.groups()[0])
 
-C = [i for i in c]
+C = c.copy()
 
-for m in re.finditer("(\d+) \w+ (\d+) \w+ (\d+)", b):
+for m in re.finditer("(\d+).*(\d+).*(\d+)", b):
     n, f, t = map(int, m.groups())
     f-=1; t-=1; l = len(c[f])
     c[t] += c[f][l-n:][::-1];  c[f] = c[f][:l-n]
@@ -19,6 +19,7 @@ for m in re.finditer("(\d+) \w+ (\d+) \w+ (\d+)", b):
 
 print(m := "".join(i[-1] for i in c))
 submit(m, year=2022, day=5, part="a")
+
 print(m := "".join(i[-1] for i in C))
 submit(m, year=2022, day=5, part="b")
 
