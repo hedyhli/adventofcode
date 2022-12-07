@@ -1,79 +1,32 @@
+# goal: short but not golfed
+
 from aocd import submit
 
-# goal: minimal but readable and maintainable though definetely not golfed (YET)
 
 with open("input.txt") as f:
     lines = f.read().strip().split("\n")
 
+p = []
+d = {}
 
-class Path():
-    """List of parent directory names
-
-    - Always absolute path from /
-    - Path representation, eg: //a/b
-    - Allows for slicing of internal path list in self.s(start, end)
-
-    - __add__: append to internal path list
-    - __len__: length of internal path list
-    - pop:     wraps internal path list's .pop() with no modification
-    """
-    def __init__(self):
-        self.path = []
-
-    def __add__(self, item):
-        """Add a dir to the path"""
-        self.path.append(item)
-        return self
-
-    def s(self, start=0, end=0):
-        """__str__ but with list slicing
-
-        Path with leading double slash, each dir joined with "/"
-        """
-        if not self.path:
-            return "/"
-        return "/".join(self.path[start:end or len(self.path)])
-
-    def pop(self, *args, **kwargs):
-        return self.path.pop(*args, **kwargs)
-
-    def __len__(self):
-        return len(self.path)
-
-
-# ["/", "a", "b", "c"]
-parents = Path()
-# {"//a/b/c": size (int), ...}
-dirs = {}
-
-i = -1
-while i < len(lines)-1:
-    i += 1
-    if (line:=lines[i]).endswith(".."):
-        parents.pop()
-    elif line.startswith("$ cd"):
-        arg = line[5:]
-        parents += arg
-        if (key:=parents.s()) not in dirs.keys():
-            dirs[key] = 0
+for l in lines:
+    if l.endswith(".."):
+        p.pop()
+    elif l.startswith("$ cd"):
+        a = l[5:]
+        p.append(a)
+        if (key:="/".join(p)) not in d.keys():
+            d[key] = 0
         continue
+    elif l[0].isdigit():
+        a = int(l.split(" ")[0])
+        for j in range(1, len(p)+1):
+            d["/".join(p[:j])] += int(a)
 
-    elif line[0].isdigit():  # file listing
-        a = int(line.split(" ")[0])
-        for j in range(1, len(parents)+1):
-            dirs[parents.s(end=j)] += int(a)
 
-print(list(dirs.keys())[0])
-
-# sum of all **/* dirs with size <1e5
-print(s:=sum( i for i in dirs.values() if i <= 100_000 ))
+print(s:=sum(i for i in d.values() if i <= 1e5))
 submit(s, part="a", day=7, year=2022)
 
-# part 2
-#             should free
-#           = wanted free - current free
-#           = wanted free - (total avai - total used)
-should_free = 30_000_000  - 70_000_000 + dirs["/"]
-# smallest **/* dir to remove from total, so free space >= 3e7
-print(s := sorted(size for size in dirs.values() if size >= should_free)[0])
+want = 3e7  - 7e7 + d["/"]
+print(s:=sorted(s for s in d.values() if s >= want)[0])
 submit(s, part="b", day=7, year=2022)
