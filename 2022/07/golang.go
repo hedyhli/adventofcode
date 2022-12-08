@@ -79,7 +79,7 @@ func main() {
 
 		// part 2
 		// minSizeDel set to max first, used to compare and find min later
-		minSizeDel int = 7e7  // part 2
+		minSizeDel int = 7e7
 	)
 
 	shouldFree := 3e7 - 7e7 + dirs["/"]
