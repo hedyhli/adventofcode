@@ -93,7 +93,7 @@ func main() {
 		}
 	}
 
-	fmt.Println("Part 1: Total size of directory under 100,000")
+	fmt.Println("Part 1: Total size of directories under 100,000")
 	fmt.Println(sum)
 	fmt.Println("Part 2: Smallest directory to delete to have 30,000,000 free")
 	fmt.Println(minSizeDel)
