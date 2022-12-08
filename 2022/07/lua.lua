@@ -1,20 +1,18 @@
-
 path = {}
 dirs = {}
 
 for line in io.lines("input.txt") do
-    d = line:match("^$ cd (.+)")
+    local d = line:match("^$ cd (.+)")
     if d == ".." then
         table.remove(path)
     elseif d then
         table.insert(path, d)
     end
-    size = line:match("^%d+")
+    local size = line:match("^%d+")
     if size then
         size = tonumber(size)
         for i = 1, #path do
-            p = table.concat(path, "/", 1, i)
-            -- print(p)
+            local p = table.concat(path, "/", 1, i)
             dirs[p] = (dirs[p] or 0) + size
         end
     end
