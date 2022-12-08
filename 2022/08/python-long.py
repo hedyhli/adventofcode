@@ -1,3 +1,6 @@
+# goal: readable and maintainable
+# see python.py for minimal version (not golfed!)
+
 from aocd import submit
 
 with open(0) as f:

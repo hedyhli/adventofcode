@@ -1,3 +1,7 @@
+# goal: short but not golfed
+# see python-long.py for explanations in comments
+
+
 with open(0) as f:
     L = [tuple(map(int, l)) for l in f.read().strip().splitlines()]
 
