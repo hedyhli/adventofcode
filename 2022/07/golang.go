@@ -14,7 +14,7 @@ var path []string
 var dirs map[string]int
 
 var (
-	reCd = regexp.MustCompile(`^\$ cd (.+)`)
+	reCd       = regexp.MustCompile(`^\$ cd (.+)`)
 	reFileSize = regexp.MustCompile(`(\d+) `)
 )
 
@@ -35,7 +35,7 @@ func parseLine(line string) {
 		path = append(path, d)
 		return
 	}
-	
+
 	matchSlice = reFileSize.FindStringSubmatch(line)
 	if len(matchSlice) > 1 {
 		size, err = strconv.Atoi(matchSlice[1])
