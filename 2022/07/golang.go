@@ -85,7 +85,7 @@ func main() {
 	shouldFree := 3e7 - 7e7 + dirs["/"]
 
 	for _, size := range dirs {
-		if size <= 100000 {
+		if size <= 1e5 {
 			sum += size
 		}
 		if size >= shouldFree && size < minSizeDel {
