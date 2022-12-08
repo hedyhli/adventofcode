@@ -1,5 +1,7 @@
 # goal: short but not golfed
 
+from collections import defaultdict
+
 from aocd import submit
 
 
@@ -7,7 +9,7 @@ with open("input.txt") as f:
     lines = f.read().strip().split("\n")
 
 p = []
-d = {}
+d = defaultdict(int)
 
 for l in lines:
     if l.endswith(".."):
@@ -15,8 +17,6 @@ for l in lines:
     elif l.startswith("$ cd"):
         a = l[5:]
         p.append(a)
-        if (key:="/".join(p)) not in d.keys():
-            d[key] = 0
         continue
     elif l[0].isdigit():
         a = int(l.split(" ")[0])

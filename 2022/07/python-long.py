@@ -1,5 +1,7 @@
 # goal: minimal but readable and maintainable though definetely not golfed (YET)
 
+from collections import defaultdict
+
 from aocd import submit
 
 
@@ -45,7 +47,8 @@ class Path():
 # ["/", "a", "b", "c"]
 parents = Path()
 # {"//a/b/c": size (int), ...}
-dirs = {}
+# value = 0 for unknown keys
+dirs = defaultdict(int)
 
 i = -1
 while i < len(lines)-1:
@@ -56,8 +59,6 @@ while i < len(lines)-1:
     elif line.startswith("$ cd"):
         arg = line[5:]
         parents += arg
-        if (key:=parents.s()) not in dirs.keys():
-            dirs[key] = 0
         continue
 
     elif line[0].isdigit():  # file listing
