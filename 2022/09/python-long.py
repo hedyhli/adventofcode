@@ -1,3 +1,5 @@
+# goal: readable and maintainable (and understandable)
+
 from aocd import submit
 
 
