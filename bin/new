@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+
+
+help () {
+    cat <<END
+usage: $(basename $0) [ -h|--help ] [ -n ] [day] [year]
+
+options:
+    -h/--help:   this
+    -n:          dry-run
+
+arguments:
+    day:         zero padded, two digit
+    year:        4-digit year
+
+description:
+    initializes directory  (aocroot) $aocroot/year/day
+    with files in          (skelpath) $skelpath/*
+
+customization: env variables \$AOCROOT and \$AOC_SKELPATH
+today is $year/$day
+END
+    exit
+}
+
+# initialize env
+year=$(date '+%Y')
+day=$(date '+%d')
+
+skelpath=$AOC_SKELPATH
+aocroot=$AOCROOT
+
+if [ -z "$aocroot" ]; then
+    aocroot=$(dirname $PWD)
+fi
+if [ -z "$skelpath" ]; then
+    skelpath=$aocroot/skel
+fi
+
+# arg parse
+dayarg="$1"
+yeararg="$2"
+if [ "$1" = "-h" -o "$1" = "--help" ]; then
+    help
+fi
+if [ "$1" = "-n" ]; then
+    dryrun=1
+    dayarg="$2"
+    yeararg="$3"
+fi
+
+# apply args
+if [ -n "$dayarg" ]; then
+    day="$2"
+fi
+dayNo0=$((10#$day))
+if [ -n "$yeararg" ]; then
+    year="$3"
+fi
+dirpath=$aocroot/$year/$day
+
+# env info
+echo "ENV: year/day: $year/$day"
+echo "ENV: aocroot:  $aocroot"
+echo "ENV: skelpath: $skelpath"
+
+# begin initialization
+if [ -e $dirpath ]; then
+    if [ -n "$(ls -A $dirpath)" ]; then
+        echo WARNING: $year/$day/ exists and is non-empty
+    fi
+fi
+
+for file in $(find $skelpath -type f -print); do
+    echo INFO: found skel file $(basename $skelpath)/$(basename $file)
+    if ! [ -e $dirpath ]; then
+        if [ "$dryrun" = 1 ]; then
+            echo "(dry run) $dirpath will be created"
+        else
+            echo mkdir -p $dirpath
+            mkdir -p $dirpath
+        fi
+    fi
+    filename=$(basename $file)
+    if [ -e $dirpath/$filename ]; then
+        echo WARNING: $year/$day/$filename exists
+    else
+        if [ "$dryrun" = 1 ]; then
+            echo "(dry run) $dirpath/$filename will be created"
+        else
+            sed -e "s/YEAR/$year/g" -e "s/DAY/$dayNo0/g" $file > $dirpath/$filename
+            echo initialized $dirpath/$(basename $file)
+        fi
+    fi
+done
