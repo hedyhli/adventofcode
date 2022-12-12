@@ -1,7 +1,5 @@
 import time
 
-with open("input.txt") as f:
-    instructions = f.read().splitlines()
 
 class Circuit:
     def __init__(self, instructions, X=1, spritewidth=3, coln=40):
@@ -47,6 +45,8 @@ class Circuit:
 
 
 if __name__ == '__main__':
+    with open("input.txt") as f:
+        instructions = f.read().splitlines()
     c = Circuit(instructions)
     c.execute()
     print("Signal strength sum:", c.strengthsum)
