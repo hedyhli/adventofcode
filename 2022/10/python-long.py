@@ -27,7 +27,7 @@ class Circuit:
 
         # Live drawing!
         time.sleep(0.02)
-        print("".join(self.rows[-1]))
+        print(*self.rows[-1])  # Space between each char - final res more readable
         if not (self.cycle+1)%40 == 0:
             print("\033[1A", end="\x1b[2K")
 
@@ -41,7 +41,7 @@ class Circuit:
         self.rows.pop()
 
     def print_result(self):
-        print("Strength sum:", self.strengthsum)
+        print("Signal strength sum:", self.strengthsum)
         print("Message:")
         print("\n".join("".join(row) for row in self.rows))
 
@@ -49,4 +49,4 @@ class Circuit:
 if __name__ == '__main__':
     c = Circuit(instructions)
     c.execute()
-    print("Strength sum:", c.strengthsum)
+    print("Signal strength sum:", c.strengthsum)
