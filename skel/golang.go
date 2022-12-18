@@ -5,7 +5,7 @@ import (
 	// "os"
 	// "log"
 	// "fmt"
-	// "ioutil"
+	// "io/ioutil"
 )
 
 func main() {
