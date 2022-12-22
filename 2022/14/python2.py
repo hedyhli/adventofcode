@@ -18,8 +18,9 @@ def hits_rock(sx, sy):
         px = py = 0
         for point in rock:
             if px == py == 0:
-                px = point[0]
-                py = point[1]
+                # px = point[0]
+                # py = point[1]
+                px, py = point
                 continue
             # n = now
             nx, ny = point
@@ -63,16 +64,19 @@ if __name__ == '__main__':
                 rocks[-1].append((x, y))
 
     floor = lowest + 2
-    sands = []  # stationary sand units
+    sands = deque()  # stationary sand units
+    n = 0
     # new sand unit
     # sand starts at 500,0
     sandx, sandy = 500, 0
     while '500,0' not in sands:
+        if len(sands) > 80:
+            sands.popleft()
         # if len(sands) > 85:
         #     print(sands, sandx, sandy)
         # if (499, 1) in sands or (501, 1) in sands:
         #     break
-        print(len(sands), end="\r")
+        print(n, end="\r")
         # if sandy >= lowest:
         #     # if it's below or equal to lowest rock level,
         #     # it will continue falling into the abyss
@@ -88,6 +92,7 @@ if __name__ == '__main__':
             if sandy+1 == floor-1:
                 # hit the floor, baby
                 sands.append(f'{sandx},{sandy+1}')
+                n += 1
                 sandx, sandy = 500, 0  # send new sand
                 continue
             sandy += 1
@@ -106,6 +111,7 @@ if __name__ == '__main__':
             # down-left and down-right doesn't work.
             # the sand unit is now stationary.
             sands.append(f'{sandx},{sandy}')
+            n += 1
             sandx, sandy = 500, 0  # send new sand
             # continue
 
@@ -115,7 +121,7 @@ if __name__ == '__main__':
 
 
     # print(sands)
-    print(s := len(sands))
+    print(n)
     # submit(s, "a", 14, 2022)
 
-    # submit(s, "b", 14, 2022)
+    submit(n, "b", 14, 2022)
