@@ -1,31 +1,117 @@
 #!/usr/bin/env bash
+#
+# for each day: /year/day, eg: 2020/01/
+# in the dir:
+#   - code (template files in $skelpath, with YEAR and DAY replaced to
+#     corresponding year, and the non-zero-padded day, eg: YEAR=2020. DAY=1
+#     thoughout the file)
+#
+# ** if current time > selected event's starting time **
+#   - puzzle.md - when puzzle not fully solved, this file contains the puzzle
+#     description, untouched obtained from aoc-cli (cargo).
+#     when puzzle fully solved, the file is modified using .editdesc.vim, and
+#     renamed to README.md
+#
+#   - input.txt - input data obtained from aocd (pip). this file is generated
+#     if haven't already
+#
+# ** OTHERWISE **
+#    option to exit script, or keep waiting with live timer (see waiting function)
+#
+# -n option runs the script as usual but skips the steps where network requests
+# are made, or files are modified.
+#
+# use direnv to setup environment variables -- https://direnv.net
+# (...pssst... kudos to direnv for supporting fish! *glares at nvm*)
+# eg: root git dir in ~/src/adventofcode, set $AOCROOT to ~/src/adventofcode in
+# .envrc of ~/src set $SKELAPTH to $AOCROOT/skel/ in .envrc of
+# ~/src/adventofcode.
+# also optionally add this script path to PATH in the local .envrc
+#
+#
+# NOTE:
+# this script is not tested on the plethora of linux distros and terminal
+# emulators and the fancy fancy shells. it works for me, and my limited use
+# cases. it's best to use this script only if your AoC code directory structure
+# is similar to mine, and your dotfiles setup is also similar to mine. the git
+# repos for both of which can be found on the git forge of which you got this
+# script's src from.
+#
+# by the way, I'm fully aware of the inconsistent naming and capitalization
+# conventions (lol)
+#
+# do check out my dotfiles if you wish to lay your eyes on some more ridiculously
+# unorganized, unidiomatic bash scripts. those are more likely to be
+# cross-platform-tested
+#
+# questions/comments? open an issue or a ticket on the git forge you got this
+# source from, or drop me an email (also found on my profile of the git forge
+# you got this source from)
+#
+# BEGIN...unlinted, jumbled mess of bash code...
+#
 
 
-help () {
+export LC_TIME=en_US.UTF8  # because month names are hardcoded in english :)
+
+# print the help message
+printhelp () {
     cat <<END
 usage: $(basename $0) [ -h|--help ] [ -n ] [day] [year]
 
+    initializes directory \$aocroot/year/day with files in \$skelpath/*
+    and puzzle description, input.txt files depending on current time
+
 options:
-    -h/--help:   this
-    -n:          dry-run
+    -h/--help
+
+    -n:          dry-run (run script but don't modify any files
+                 or create new ones)
 
 arguments:
-    day:         zero padded, two digit
-    year:        4-digit year
+    day:         *zero padded*, two-digit  (eg: 02 (for day 2))
+    year:        4-digit year              (eg: 2017)
 
-description:
-    initializes directory  (aocroot) $aocroot/year/day
-    with files in          (skelpath) $skelpath/*
+current env:
+    \$aocroot:  (AOCROOT variable)       $aocroot  (defaults to CWD)
+    \$skelpath: (AOC_SKELPATH variable)  $skelpath (defaults to \$aocroot/skel/)
 
-customization: env variables \$AOCROOT and \$AOC_SKELPATH
-today is $year/$day
+    today is $(printtoday)
+
+customization: (env variables)
+    \$AOCROOT:       root git dir of AoC repo  (eg: \$HOME/src/adventofcode)
+    \$AOC_SKELPATH:  path to template files    (eg: \$HOME/src/adventofcode/skel)
+
+***
+further documentation? check the source code :P
 END
-    exit
+}
+
+# print today is 'year/day' format. If current month is not december: then
+# 'year mon day' format
+printtoday () {
+    echo -n "$today_year"
+    if ! [ $today_month = Dec ]; then
+        echo -n " $today_month "
+    else
+        echo -n "/"
+    fi
+    echo $today_day
+}
+
+# print a log string if dry run flag used
+log () {
+    if [ "$dryrun" = 1 ]; then
+        echo "[DRY-RUN] $1"
+    fi
 }
 
 # initialize env
 year=$(date '+%Y')
 day=$(date '+%d')
+today_year=$year
+today_day=$day
+today_month=$(date '+%b')
 
 skelpath=$AOC_SKELPATH
 aocroot=$AOCROOT
@@ -37,59 +123,374 @@ if [ -z "$skelpath" ]; then
     skelpath=$aocroot/skel
 fi
 
-# arg parse
-dayarg="$1"
-yeararg="$2"
-if [ "$1" = "-h" -o "$1" = "--help" ]; then
-    help
-fi
-if [ "$1" = "-n" ]; then
-    dryrun=1
-    dayarg="$2"
-    yeararg="$3"
-fi
-
-# apply args
-if [ -n "$dayarg" ]; then
-    day="$2"
-fi
-dayNo0=$((10#$day))
-if [ -n "$yeararg" ]; then
-    year="$3"
-fi
-dirpath=$aocroot/$year/$day
 
 # env info
-echo "ENV: year/day: $year/$day"
-echo "ENV: aocroot:  $aocroot"
-echo "ENV: skelpath: $skelpath"
+envinfo () {
+    echo "ENV: TODAY:    $(printtoday)"
+    echo "ENV: year/day: $year/$day"
+    echo "ENV: aocroot:  $aocroot"
+    echo "ENV: skelpath: $skelpath"
+}
 
-# begin initialization
-if [ -e $dirpath ]; then
-    if [ -n "$(ls -A $dirpath)" ]; then
-        echo WARNING: $year/$day/ exists and is non-empty
-    fi
-fi
-
-for file in $(find $skelpath -type f -print); do
-    echo INFO: found skel file $(basename $skelpath)/$(basename $file)
-    if ! [ -e $dirpath ]; then
-        if [ "$dryrun" = 1 ]; then
-            echo "(dry run) $dirpath will be created"
+# Create year/day/ folder
+initdirs () {
+    if [ -e $dirpath ]; then
+        if [ -n "$(ls -A $dirpath)" ]; then
+            echo "WARNING: $year/$day/ exists and is non-empty"
+            echo -e "\n--- Directory listing:"
+            ls $dirpath
+            echo "--- End of directory listing"
+            read -p "Proceed? [Y/n]  " option
+            if [[ "$option" == "n" ]]; then
+                echo "exiting"
+                exit
+            fi
         else
-            echo mkdir -p $dirpath
-            mkdir -p $dirpath
+            log "$year/$day exists but is empty"
         fi
+        return
     fi
-    filename=$(basename $file)
-    if [ -e $dirpath/$filename ]; then
-        echo WARNING: $year/$day/$filename exists
-    else
-        if [ "$dryrun" = 1 ]; then
-            echo "(dry run) $dirpath/$filename will be created"
-        else
+    log "$dirpath will be created"
+    if ! [ "$dryrun" = 1 ]; then
+        echo mkdir -p $dirpath
+        mkdir -p $dirpath
+    fi
+}
+
+# Generate code files using templates
+templatefiles () {
+    for file in $(find $skelpath -type f -print); do
+        filename=$(basename $file)
+        echo INFO: found skel file $(basename $skelpath)/$filename
+        if [ -e $dirpath/$filename ]; then
+            echo WARNING: $year/$day/$filename exists, skipping
+            continue
+        fi
+        log "$dirpath/$filename will be created"
+        if ! [ "$dryrun" = 1 ]; then
             sed -e "s/YEAR/$year/g" -e "s/DAY/$dayNo0/g" $file > $dirpath/$filename
             echo initialized $dirpath/$(basename $file)
         fi
+    done
+}
+
+# Keep waiting if it's not time yet. Return when puzzle has been released
+# or quit upon user request
+waiting () {
+    export TZ=UTC
+    now=$(date '+%s')
+    echo "ENV: selected event: UTC $year-12-${day}T05:00:00"
+    echo "ENV: current time  : UTC $(date '+%Y-%m-%dT%T')"
+
+    if (( $now < $aoctime )); then
+        # not yet AoC!
+        echo "********************"
+        echo " It's not time yet!"
+        echo "********************"
+        echo -e "\nPress enter to keep waiting. q or ^C to quit"
+        read -p ">  " option
+        if [[ "$option" = q ]]; then
+            exit
+        fi
+        echo
+        while (( $now < $aoctime )); do
+            timeleft
+            sleep 1
+            tput cuu1 # move cursor up by one line
+            tput el # clear the line
+        done
+        echo
     fi
-done
+    echo "Current event puzzle has been released!"
+    echo "View on the web:"
+    echo "https://adventofcode.com/$year/day/$dayNo0"
+}
+# print time left until the selected event puzzle releases
+timeleft () {
+    left=$((aoctime - $(date '+%s')))       # seconds left
+    days=$(($(date -d"@$left" "+%d") - 1))  # convert it to days
+    if (( $days > 0 )); then
+        daystr="$days days, "
+        if (( $days == 1 )); then
+            daystr="1 day, "
+        fi
+    fi
+    timestr=$(date -d"@$left" "+%T")        # hh:mm:ss time left
+    echo "$daystr$timestr"
+}
+
+
+# puzzle.md
+# Use --no-inspect to skip inspection with editor
+puzzlefile () {
+    if ! command -v aoc &> /dev/null; then
+        echo "ERROR: command aoc (aoc-cli) not found"
+        echo "https://github.com/scarvalhojr/aoc-cli"
+        return
+    fi
+
+    if [ -e $dirpath/README.md ]; then
+        echo "WARNING: $year/$day/README.md exists"
+        if grep 'Part Two ---' $dirpath/README.md &> /dev/null; then
+            echo "INFO: The file appears to be ready"
+            if ! [ "$1" = --no-inspect ]; then
+                echo "Inspect README.md with ${EDITOR:-nano}..."
+                read -p "(press enter to continue)  "
+                ${EDITOR:-nano} $dirpath/README.md
+            fi
+
+            echo "What would you like to do?"
+            cat <<EOF
+            1. Skip puzzle description file creation
+               (choose if README.md is all set)
+
+            2. Rename README.md to puzzle.md and proceed
+               (choose if README.md is not the full puzzle)
+
+            3. Rename README.md to puzzle.md and skip to next task
+               (choose if README.md is not the full puzzle, but don't update it right now)
+
+            4. Delete README.md and proceed          [DEFAULT]
+               (initialize puzzle.md from scratch, remove README.md)
+
+            5. Enter shell to examine environment then restart
+
+            q. ABORT (quit the script)
+EOF
+            read -p "1/2/3/4/5/q>  " option
+            case "$option" in
+                "1")
+                    log "puzzle.md will be skipped"
+                    return
+                    ;;
+                "2"|"3")
+                    log "README.md will be renamed to puzzle.md"
+
+                    if ! [ "$dryrun" = 1 ]; then
+                        echo mv $dirpath/README.md $dirpath/puzzle.md
+                        mv $dirpath/README.md $dirpath/puzzle.md
+                    fi
+                    if [ "$option" = 3 ]; then
+                        log "leaving puzzle.md task"
+                        return
+                    fi
+                    ;;
+                "4"|"")
+                    log "README.md will be deleted"
+                    if ! [ "$dryrun" = 1 ]; then
+                        echo rm $dirpath/README.md
+                        rm $dirpath/README.md
+                    fi
+                    ;;
+                "5")
+                    echo "Entering $SHELL"
+                    echo "Exit with a non-zero code to quit after the shell quits."
+                    if ! $SHELL; then
+                        log "exiting"
+                        exit
+                    fi
+                    return 1  # restart function (see 'main' later)
+                    ;;
+                "q")
+                    log "exiting"
+                    exit
+                    ;;
+                *)
+                    echo "ERROR: Unknown option"
+                    return 1
+                    ;;
+            esac
+        else
+            echo 'INFO: "Part Two ---" not found in README.md'
+            log "README.md will be deleted"
+            if ! [ "$dryrun" = 1 ]; then
+                echo rm $dirpath/README.md
+                rm $dirpath/README.md
+            fi
+        fi
+    fi
+
+    if [ -e $dirpath/puzzle.md ]; then
+        echo "INFO: puzzle.md exists"
+        if grep 'Part Two ---' $dirpath/puzzle.md &> /dev/null; then
+            echo INFO: Part One appears to be solved
+            puzzledesc_p1_post -u
+            return
+        fi
+        echo "INFO: Part One does not appear to be solved"
+        echo "INFO: Attempting to update puzzle.md, assuming Part One is solved"
+        puzzledesc_p1
+        return
+    fi
+    log "puzzle.md does not exist yet"
+    log "puzzle.md will be generated using aoc-cli"
+    log "$aocroot/.editdesc.vim will be sourced if both parts of puzzle are complete"
+    if ! [ "$dryrun" = 1 ]; then
+        echo INFO: Generating puzzle.md
+        puzzledesc_p1
+        return
+    fi
+}
+# Entry point for either puzzle.md does not exist yet, or part one not solved yet
+puzzledesc_p1 () {
+    log "puzzle.md will be refreshed with aoc"
+    if ! [ "$dryrun" = 1 ]; then
+        if aoc -y $year -d $day -o -p $dirpath/puzzle.md | grep 'Part Two ---' &> /dev/null; then
+            echo "INFO: Part One now appears to be solved"
+            puzzledesc_p1_post
+            return
+        fi
+        echo "INFO: Part One does not appear to be solved"
+        echo "Stopping"
+        return
+    fi
+}
+# Update puzzle.md for part two description - verifying part one is solved
+# if -u flag not used, proceed to updating for part two
+puzzledesc_p1_post () {
+    if grep 'this puzzle are complete!' $dirpath/puzzle.md &> /dev/null; then
+        echo INFO: Part Two appears to be solved
+        log "puzzle.md will be modified using .editdesc.vim"
+        log "puzzle.md will be renamed to README.md"
+        if ! [ "$dryrun" = 1 ]; then
+            vim $dirpath/puzzle.md "+so $aocroot/.editdesc.vim" "+wq"
+            echo mv $dirpath/puzzle.md $dirpath/README.md
+            mv $dirpath/puzzle.md $dirpath/README.md
+        fi
+        return
+    fi
+    if ! [[ "$1" = "-u" ]]; then
+        return
+    fi
+    puzzledesc_p2_post
+}
+# Update puzzle.md for part two answer info - verifying part two is solved. If
+# so, source .editdesc.vim and rename it to puzzle.md
+puzzledesc_p2_post () {
+    log "will attempt to update puzzle.md using aoc for part two answer information"
+    if ! [ "$dryrun" = 1 ]; then
+        echo INFO: attempting to update puzzle.md, assuming Part Two is solved
+        if aoc -y $year -d $day -o -p $dirpath/puzzle.md | grep 'this puzzle are complete!' &> /dev/null; then
+            echo "INFO: puzzle.md updated as Part Two is solved"
+
+            echo vim $dirpath/puzzle.md "+so $aocroot/.editdesc.vim" "+wq"
+            vim $dirpath/puzzle.md "+so $aocroot/.editdesc.vim" "+wq"
+
+            echo mv $dirpath/puzzle.md $dirpath/README.md
+            mv $dirpath/puzzle.md $dirpath/README.md
+
+            return
+        fi
+        echo "INFO: Part Two is not solved yet. Not renaming puzzle.md"
+    fi
+}
+
+# save input data at input.txt, using aocd
+inputfile () {
+    if [[ -e $dirpath/input.txt ]]; then
+        if [ "$(wc -l $dirpath/input.txt | cut -d " " -f1)" = 0 ]; then
+            echo WARNING: input.txt exists but is empty. It will be regenerated
+        else
+            echo WARNING: input.txt exists and is non-empty. It will be left untouched
+            return
+        fi
+    fi
+
+    # aocd command
+    if ! command -v aocd &> /dev/null; then
+        echo WARNING: aocd command not found. Attempting to source venv activation script
+        if ! [[ -e $aocroot/venv/bin/activate ]]; then
+            echo "ERROR: $aocroot/venv/bin/activate not found"
+            echo "       input.txt creation will be skipped"
+            return
+        fi
+        log "$aocroot/venv/bin/activate will be sourced"
+        log "if aocd command exists, $year/$day/input.txt will be created"
+        if ! [ "$dryrun" = 1 ]; then
+            echo source $aocroot/venv/bin/activate
+            source $aocroot/venv/bin/activate
+
+            if ! command -v aocd &> /dev/null; then
+                echo ERROR: Activation script sourced, but aocd command not found.
+                echo "      please 'pip install advent-of-code-data'"
+                echo "      input.txt creation will be skipped"
+                return
+            fi
+        fi
+    else
+        log "aocd command is found, input.txt will be created"
+    fi
+    if ! [ "$dryrun" = 1 ]; then
+        echo "aocd $dayNo0 $year > $dirpath/input.txt"
+        aocd $dayNo0 $year > $dirpath/input.txt
+    fi
+}
+
+
+### main ###############################################################
+
+# stupid arg parse lol
+if [ "$1" = "-h" -o "$1" = "--help" ]; then
+    printhelp
+    exit
+fi
+if [ "$1" = "-n" ]; then
+    dryrun=1
+    shift
+fi
+dayarg="$1"
+yeararg="$2"
+
+# apply args
+if [ -n "$dayarg" ]; then
+    day="$dayarg"
+fi
+if [ -n "$yeararg" ]; then
+    year="$yeararg"
+fi
+
+# check args
+if ! [[ "$year" =~ ^20[0-9]{2}$ ]]; then
+    echo "ERROR: year argument must match ^20[0-9]{2}$"
+    exit 1
+fi
+if ! (( $year >= 2015 )); then
+    echo "ERROR: year argument must be 2015 or after"
+    exit 1
+fi
+if ! [[ "$day" =~ ^[0-9]{2}$ ]]; then
+    echo "ERROR: year argument must match ^[0-9]{2}$"
+    echo "(for single-digit day, zero-pad it, eg: 02)"
+    exit 1
+fi
+# non-zero-padded day
+dayNo0=$((10#$day))
+if ! (( $dayNo0 <= 25 )) && (( $dayNo0 > 0 )); then
+    echo "ERROR: day must be <= 25"
+    exit 1
+fi
+
+# Vamos >>> We're all set!
+dirpath=$aocroot/$year/$day
+export aoctime=$(date -d"$year-12-${day}T5:00" '+%s')
+
+echo "Printing env"
+envinfo
+
+echo -e "\nInitializing direcotry $year/$day"
+initdirs
+
+echo -e "\nCopying template files"
+templatefiles
+
+echo -e "\nChecking local time"
+waiting
+
+echo -e "\nCreating puzzle description file"
+if ! puzzlefile; then
+    while ! puzzlefile --no-inspect; do
+        echo -e "Restarting task: puzzlefile \n"
+    done
+fi
+echo -e "\nCreating puzzle input data file"
+inputfile
