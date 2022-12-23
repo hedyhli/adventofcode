@@ -1,4 +1,5 @@
-# Day 8: Treetop Tree House
+\--- Day 8: Treetop Tree House ---
+----------
 
 The expedition comes across a peculiar patch of tall trees all planted carefully in a grid. The Elves explain that a previous expedition planted these trees as a reforestation effort. Now, they're curious if this would be a good location for a [tree house](https://en.wikipedia.org/wiki/Tree_house).
 
@@ -12,7 +13,6 @@ The Elves have already launched a [quadcopter](https://en.wikipedia.org/wiki/Qua
 65332
 33549
 35390
-
 ```
 
 Each tree is represented as a single digit whose value is its height, where `0` is the shortest and `9` is the tallest.
@@ -34,7 +34,8 @@ With 16 trees visible on the edge and another 5 visible in the interior, a total
 Consider your map; *how many trees are visible from outside the grid?*
 
 
-# Part Two
+\--- Part Two ---
+----------
 
 Content with the amount of tree cover available, the Elves just need to know the best spot to build their tree house: they would like to be able to see a lot of *trees*.
 
@@ -50,7 +51,6 @@ In the example above, consider the middle `5` in the second row:
 65332
 33549
 35390
-
 ```
 
 * Looking up, its view is not blocked; it can see `*1*` tree (of height `3`).
@@ -68,7 +68,6 @@ However, you can do even better: consider the tree of height `5` in the middle o
 65332
 33549
 35390
-
 ```
 
 * Looking up, its view is blocked at `*2*` trees (by another tree with a height of `5`).
@@ -79,3 +78,4 @@ However, you can do even better: consider the tree of height `5` in the middle o
 This tree's scenic score is `*8*` (`2 * 2 * 1 * 2`); this is the ideal spot for the tree house.
 
 Consider each tree on your map. *What is the highest scenic score possible for any tree?*
+

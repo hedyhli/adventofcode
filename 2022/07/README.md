@@ -1,4 +1,5 @@
-# Day 7: No Space Left On Device
+\--- Day 7: No Space Left On Device ---
+----------
 
 You can hear birds chirping and raindrops hitting leaves as the expedition proceeds. Occasionally, you can even hear much louder sounds in the distance; how big do the animals get out here, anyway?
 
@@ -7,7 +8,6 @@ The device the Elves gave you has problems with more than just its communication
 ```
 $ system-update --please --pretty-please-with-sugar-on-top
 Error: No space left on device
-
 ```
 
 Perhaps you can delete some files to make space for the update?
@@ -38,7 +38,6 @@ $ ls
 8033020 d.log
 5626152 d.ext
 7214296 k
-
 ```
 
 The filesystem consists of a tree of files (plain data) and directories (which can contain other directories or files). The outermost directory is called `/`. You can navigate around the filesystem, moving into or out of directories and listing the contents of the directory you're currently in.
@@ -71,7 +70,6 @@ Given the commands and output in the example above, you can determine that the f
     - d.log (file, size=8033020)
     - d.ext (file, size=5626152)
     - k (file, size=7214296)
-
 ```
 
 Here, there are four directories: `/` (the outermost directory), `a` and `d` (which are in `/`), and `e` (which is in `a`). These directories also contain files of various sizes.
@@ -90,7 +88,8 @@ To begin, find all of the directories with a total size of *at most 100000*, the
 Find all of the directories with a total size of at most 100000. *What is the sum of the total sizes of those directories?*
 
 
-# Part Two
+\--- Part Two ---
+----------
 
 Now, you're ready to choose a directory to delete.
 
@@ -108,3 +107,4 @@ To achieve this, you have the following options:
 Directories `e` and `a` are both too small; deleting them would not free up enough space. However, directories `d` and `/` are both big enough! Between these, choose the *smallest*: `d`, increasing unused space by `*24933642*`.
 
 Find the smallest directory that, if deleted, would free up enough space on the filesystem to run the update. *What is the total size of that directory?*
+

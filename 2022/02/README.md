@@ -1,4 +1,5 @@
-# Day 2: Rock Paper Scissors
+\--- Day 2: Rock Paper Scissors ---
+----------
 
 The Elves begin to set up camp on the beach. To decide whose tent gets to be closest to the snack storage, a giant [Rock Paper Scissors](https://en.wikipedia.org/wiki/Rock_paper_scissors) tournament is already in progress.
 
@@ -31,7 +32,8 @@ In this example, if you were to follow the strategy guide, you would get a total
 *What would your total score be if everything goes exactly according to your strategy guide?*
 
 
-# Part Two
+\--- Part Two ---
+----------
 
 The Elf finishes helping with the tent and sneaks back over to you. "Anyway, the second column says how the round needs to end: `X` means you need to lose, `Y` means you need to end the round in a draw, and `Z` means you need to win. Good luck!"
 
