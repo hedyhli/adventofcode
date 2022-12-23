@@ -8,7 +8,7 @@ I try to optimize some when I have free time, golf solutions aren't even the bes
 do you like code-golfing? check out [this
 repo](https://github.com/Starwort/advent-of-golf-2022)!
 
-long, modular solutions are always documented, but rarely (if not at all) tested
+long, modular solutions are always documented, but rarely (if not at all) unit-tested
 
 **do I have solutions in your favorite programming language?**
 
@@ -43,9 +43,9 @@ near future, which covers both of their functionalities
 
 yup!
 
-check out [bin/new][bin/new]
+check out [bin/new](bin/new)
 
-templates at [skel/][skel/]
+templates at [skel/](skel/)
 
 **pretend this is actual installable software and document how a user should set it up**
 
