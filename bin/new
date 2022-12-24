@@ -9,8 +9,8 @@
 # ** if current time > selected event's starting time **
 #   - puzzle.md - when puzzle not fully solved, this file contains the puzzle
 #     description, untouched obtained from aoc-cli (cargo).
-#     when puzzle fully solved, the file is modified using .editdesc.vim, and
-#     renamed to README.md
+#     when puzzle fully solved, the file is modified using .editdesc.vim, which
+#     would put answers in answer.md, and then puzzle.md is renamed to README.md
 #
 #   - input.txt - input data obtained from aocd (pip). this file is generated
 #     if haven't already
@@ -199,7 +199,7 @@ waiting () {
             tput cuu1 # move cursor up by one line
             tput el # clear the line
         done
-        echo
+        echo  # avoid writing through the timeleft line
     fi
     echo "Current event puzzle has been released!"
     echo "View on the web:"
@@ -231,21 +231,35 @@ puzzlefile () {
 
     if [ -e $dirpath/README.md ]; then
         echo "WARNING: $year/$day/README.md exists"
+        echo tail $dirpath/README.md
+        echo ---------
+        tail $dirpath/README.md
+        echo ---------
         if grep 'Part Two ---' $dirpath/README.md &> /dev/null; then
+            echo
             echo "INFO: The file appears to be ready"
             if ! [ "$1" = --no-inspect ]; then
-                echo "Inspect README.md with ${EDITOR:-nano}..."
-                read -p "(press enter to continue)  "
-                ${EDITOR:-nano} $dirpath/README.md
+                echo "Inspect README.md with editor '${EDITOR:-nano}'?"
+                read -p "press enter to continue (q to skip inspection)..." option
+                if ! [ $option = 'q' ]; then
+                    ${EDITOR:-nano} $dirpath/README.md
+                    if [ -e $dirpath/answers.md ]; then
+                        echo "WARNING: $year/$day/answers.md exists"
+                        echo head $dirpath/answers.md
+                        echo ---------
+                        head $dirpath/answers.md
+                        echo ---------
+                    fi
+                fi
             fi
 
             echo "What would you like to do?"
             cat <<EOF
-            1. Skip puzzle description file creation
-               (choose if README.md is all set)
+            1. Skip puzzle description file creation and answers.md generation
+               (choose if README.md and answers.md is all set)
 
             2. Rename README.md to puzzle.md and proceed
-               (choose if README.md is not the full puzzle)
+               (choose if README.md contains full puzzle)
 
             3. Rename README.md to puzzle.md and skip to next task
                (choose if README.md is not the full puzzle, but don't update it right now)
@@ -253,7 +267,7 @@ puzzlefile () {
             4. Delete README.md and proceed          [DEFAULT]
                (initialize puzzle.md from scratch, remove README.md)
 
-            5. Enter shell to examine environment then restart
+            5. Enter shell to examine environment then restart this task
 
             q. ABORT (quit the script)
 EOF
@@ -350,13 +364,7 @@ puzzledesc_p1 () {
 puzzledesc_p1_post () {
     if grep 'this puzzle are complete!' $dirpath/puzzle.md &> /dev/null; then
         echo INFO: Part Two appears to be solved
-        log "puzzle.md will be modified using .editdesc.vim"
-        log "puzzle.md will be renamed to README.md"
-        if ! [ "$dryrun" = 1 ]; then
-            vim $dirpath/puzzle.md "+so $aocroot/.editdesc.vim" "+wq"
-            echo mv $dirpath/puzzle.md $dirpath/README.md
-            mv $dirpath/puzzle.md $dirpath/README.md
-        fi
+        puzzleanswers
         return
     fi
     if ! [[ "$1" = "-u" ]]; then
@@ -372,16 +380,26 @@ puzzledesc_p2_post () {
         echo INFO: attempting to update puzzle.md, assuming Part Two is solved
         if aoc -y $year -d $day -o -p $dirpath/puzzle.md | grep 'this puzzle are complete!' &> /dev/null; then
             echo "INFO: puzzle.md updated as Part Two is solved"
-
-            echo vim $dirpath/puzzle.md "+so $aocroot/.editdesc.vim" "+wq"
-            vim $dirpath/puzzle.md "+so $aocroot/.editdesc.vim" "+wq"
-
-            echo mv $dirpath/puzzle.md $dirpath/README.md
-            mv $dirpath/puzzle.md $dirpath/README.md
-
+            puzzleanswers
             return
         fi
         echo "INFO: Part Two is not solved yet. Not renaming puzzle.md"
+    fi
+}
+# Source .editdesc.vim and generate answers.md, rename puzzle.md to README.md
+puzzleanswers () {
+    log "puzzle.md will be modified using .editdesc.vim"
+    log "answers.md will be generated"
+    log "puzzle.md will be renamed to README.md"
+    if ! [ "$dryrun" = 1 ]; then
+        echo "INFO: Sourcing .editdesc.vim to modify puzzle.md and generate answers.md"
+        echo rm -f $dirpath/answer.md
+        rm -f $dirpath/answer.md
+        echo vim --clean $dirpath/puzzle.md \"+so $aocroot/.editdesc.vim\" \"+wq\"
+        vim --clean $dirpath/puzzle.md "+so $aocroot/.editdesc.vim" "+wq"
+
+        echo mv $dirpath/puzzle.md $dirpath/README.md
+        mv $dirpath/puzzle.md $dirpath/README.md
     fi
 }
 
