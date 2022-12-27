@@ -1,28 +1,16 @@
-from collections import deque
-
-from aocd import submit
-# from pysnooper import snoop
 
 
-# @snoop()
 def hits_rock(sx, sy):
     """Whether sand at coords x,y HAS hit a rock below"""
 
-    x = sx; y = sy# + 1
-
-    # if y == floor:
-    #     return True
+    x = sx; y = sy
 
     for rock in rocks:
-        # p = previous
         px = py = 0
         for point in rock:
             if px == py == 0:
-                # px = point[0]
-                # py = point[1]
                 px, py = point
                 continue
-            # n = now
             nx, ny = point
 
             # comparison
@@ -50,11 +38,18 @@ def hits_rock(sx, sy):
 
 if __name__ == '__main__':
 
+    import sys
+    inputfn = sys.argv[1] if len(sys.argv) > 1 else "input.txt"
+
+    from collections import deque
+
+    from aocd import submit
+
     rocks = []  # input data not further parsed
     lowest = 0  # highest y-coordinate of rocks
 
 
-    with open("input.txt") as f:
+    with open(0 if inputfn == '-' else inputfn) as f:
         for line in f.read().splitlines():
             rocks.append([])
             for coord in line.split(' -> '):
@@ -64,28 +59,16 @@ if __name__ == '__main__':
                 rocks[-1].append((x, y))
 
     floor = lowest + 2
+    print(floor)
     sands = deque()  # stationary sand units
     n = 0
     # new sand unit
     # sand starts at 500,0
     sandx, sandy = 500, 0
     while '500,0' not in sands:
-        if len(sands) > 80:
+        if len(sands) > 76: # arbitrary 80
             sands.popleft()
-        # if len(sands) > 85:
-        #     print(sands, sandx, sandy)
-        # if (499, 1) in sands or (501, 1) in sands:
-        #     break
         print(n, end="\r")
-        # if sandy >= lowest:
-        #     # if it's below or equal to lowest rock level,
-        #     # it will continue falling into the abyss
-        #     # sandx, sandy = 500, 0
-        #     # # hence, send new sand. stop tracking this one.
-        #     # continue
-        #     print(sandx, sandy)
-        #     break
-
 
         if not hits_rock(sandx, sandy+1) and f'{sandx},{sandy+1}' not in sands:
             # continue going down until it hits a rock or another sand unit
@@ -113,15 +96,10 @@ if __name__ == '__main__':
             sands.append(f'{sandx},{sandy}')
             n += 1
             sandx, sandy = 500, 0  # send new sand
-            # continue
-
-        # if sandx != x and sandy != y:
-            # sands.append((sandx, sandy))
-            # sandx, sandy = 500, 0  # send new sand
 
 
-    # print(sands)
     print(n)
     # submit(s, "a", 14, 2022)
 
-    submit(n, "b", 14, 2022)
+    if inputfn == "input.txt":
+        submit(n, "b", 14, 2022)
