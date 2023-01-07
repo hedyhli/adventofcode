@@ -71,12 +71,18 @@ if __name__ == '__main__':
             yield (start := lookup(start, normalize(i-prev, LEN)))
             prev = i
 
-    def printlist():
-        """Print items in list separated by 2 spaces"""
+    def printlist(n: int = 0):
+        """Print first n items in list separated by 2 spaces
+
+        n = 0 for the whole list
+        """
+        n = n or len(nexts)
+        i = 1
         c = nexts[nexts.index(0)]
         print(data[c], end="  ")
         c = nexts[c]
-        while c != 0:
+        while c != 0 and i <= n:
+            i += 1
             print(data[c], end="  ")
             c = nexts[c]
 
@@ -103,7 +109,7 @@ if __name__ == '__main__':
             nexts[targ] = cur
 
     def result():
-        """Find the 1000th, 2000th, and 3000th item, and their sum"""
+        """Find the 1000th, 2000th, and 3000th item after 0, and their sum"""
         s = 0
         nth = [ i%LEN for i in (1000, 2000, 3000) ]
         for i in incremental_lookup(i0, nth):
@@ -121,8 +127,8 @@ if __name__ == '__main__':
         submit(s, "a", day=20, year=2022)
 
     # part 2
-    DEC = 811589153; print()
-    data = [ i*DEC for i in data ]  # Apply decryption key
+    DECR = 811589153; print()
+    data = [ i*DECR for i in data ]  # Apply decryption key
     # reset
     nexts = list(range(1, LEN+1)); nexts[-1] = 0
     # Let's mix 'em!
