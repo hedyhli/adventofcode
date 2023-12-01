@@ -10,13 +10,13 @@ repo](https://github.com/Starwort/advent-of-golf-2022)!
 
 long, modular solutions are always documented, but rarely (if not at all) unit-tested
 
-**do I have solutions in your favorite programming language?**
+**does this have solutions in your favorite programming language?**
 
 take a look at the language usage breakdown, if the git forge you're reading
 this from supports it.
 
-if it doesn't, then there's a good chance that you're a shell literate! cook up
-a oneliner to analyze my file types here...
+if it doesn't support it, then there's a good chance that you're a shell
+literate! cook up a oneliner to analyze my file types here...
 
 ```sh
 find 20?? ! -name '*.md' ! -name '*.txt' -type f | sed 's/.*\.//' | sort | uniq -c | sort -bnr
@@ -26,8 +26,8 @@ find 20?? ! -name '*.md' ! -name '*.txt' -type f | sed 's/.*\.//' | sort | uniq 
 
 I'm sure you'll find ways to improve mine
 
-oh by the way, the .jpg files are probably screenshots of Apple Shortcuts
-solutions (mostly 2021)
+the .jpg files are probably screenshots of Apple Shortcuts solutions (mostly
+2021), so they are in fact valid file types of solutions.
 
 **do I have a neat setup for input and submitting?**
 
@@ -35,9 +35,6 @@ yeah, but not exactly neat
 
 - fetching puzzle description - https://github.com/scarvalhojr/aoc-cli
 - fetching input and submitting (for python) - https://pypi.org/project/advent-of-code-data/
-
-planning on rolling my own local package (for all langs!! why not :P) in the
-near future, which covers both of their functionalities
 
 **do I have a neat script or templates which I use to create new directory structures?**
 
@@ -69,7 +66,7 @@ install 'dependencies' (lol)
 perhaps.
 
 <details>
-<summary>the plan (in addition to 2022 daily)</summary>
+<summary>the plan (in addition to 2022+ daily)</summary>
 
 - [x] 2020 (python) days 1-5
 - [ ] 2020 (python) days 6-10

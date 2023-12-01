@@ -2,16 +2,22 @@
 let puzzlefile = expand("%:p")
 let dir = strtrans(substitute(system('dirname '.puzzlefile), '\n\+$', '', ''))
 exec 'e '.dir.'/answers.md'
+normal ggdG
 " set ma
 set buftype=
 exec 'r '.puzzlefile
 
-v/answer was/d
-%s/.*answer was `\(.*\)`.*/\1
+v/^Your puzzle answer was/d
+normal ggdt`xjdt`x$xxk$xx
 w
 bd
 
 " puzzle.md
-g/answer was/d
-g/this puzzle are complete!/normal dGdd
-%s/\n\n```\n\n/\r```\r\r/g
+g/^Your puzzle answer was/d
+
+g/^Both parts of this puzzle/normal! dG
+
+%s/\n\n```/\r```/g
+
+%s/`\*\(.\{-}\)\*`/*`\1`*/
+%s/\*\(.\{-}\)\*/**\1**/g

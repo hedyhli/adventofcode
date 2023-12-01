@@ -52,7 +52,7 @@
 #
 
 
-export LC_TIME=en_US.UTF8  # because month names are hardcoded in english :)
+# export LC_TIME=en_US.UTF8  # because month names are hardcoded in english :)
 
 # print the help message
 printhelp () {
@@ -177,10 +177,10 @@ templatefiles () {
 # Keep waiting if it's not time yet. Return when puzzle has been released
 # or quit upon user request
 waiting () {
-    export TZ=UTC
+    # export TZ=UTC
     now=$(date '+%s')
-    echo "ENV: selected event: UTC $year-12-${day}T05:00:00"
-    echo "ENV: current time  : UTC $(date '+%Y-%m-%dT%T')"
+    echo "ENV: selected event: $year-12-${day}T13:00:00"
+    echo "ENV: current time  : $(date '+%Y-%m-%dT%T')"
 
     if (( $now < $aoctime )); then
         # not yet AoC!
@@ -194,9 +194,11 @@ waiting () {
         fi
         echo
         while (( $now < $aoctime )); do
+            now=$(date '+%s')
             timeleft
-            sleep 1
-            tput cuu1 # move cursor up by one line
+            echo -ne "\r" # beginning of line
+            sleep 3
+            # tput cuu1 # move cursor up by one line
             tput el # clear the line
         done
         echo  # avoid writing through the timeleft line
@@ -216,7 +218,7 @@ timeleft () {
         fi
     fi
     timestr=$(date -d"@$left" "+%T")        # hh:mm:ss time left
-    echo "$daystr$timestr"
+    echo -n "$daystr$timestr"
 }
 
 
@@ -349,7 +351,7 @@ EOF
 puzzledesc_p1 () {
     log "puzzle.md will be refreshed with aoc"
     if ! [ "$dryrun" = 1 ]; then
-        if aoc -y $year -d $day -o -p $dirpath/puzzle.md | grep 'Part Two ---' &> /dev/null; then
+        if aoc -y $year -d $day -o -m -P -p $dirpath/puzzle.md d && cat $dirpath/puzzle.md | grep 'Part Two ---' &> /dev/null; then
             echo "INFO: Part One now appears to be solved"
             puzzledesc_p1_post
             return
@@ -378,7 +380,7 @@ puzzledesc_p2_post () {
     log "will attempt to update puzzle.md using aoc for part two answer information"
     if ! [ "$dryrun" = 1 ]; then
         echo INFO: attempting to update puzzle.md, assuming Part Two is solved
-        if aoc -y $year -d $day -o -p $dirpath/puzzle.md | grep 'this puzzle are complete!' &> /dev/null; then
+        if aoc -y $year -d $day -o -m -P -p $dirpath/puzzle.md d && cat $dirpath/puzzle.md | grep 'this puzzle are complete!' &> /dev/null; then
             echo "INFO: puzzle.md updated as Part Two is solved"
             puzzleanswers
             return
@@ -490,7 +492,7 @@ fi
 
 # Vamos >>> We're all set!
 dirpath=$aocroot/$year/$day
-export aoctime=$(date -d"$year-12-${day}T5:00" '+%s')
+export aoctime=$(date -d"$year-12-${day}T13:00:00" '+%s')
 
 echo "Printing env"
 envinfo
@@ -501,8 +503,8 @@ initdirs
 echo -e "\nCopying template files"
 templatefiles
 
-echo -e "\nChecking local time"
-waiting
+# echo -e "\nChecking local time"
+# waiting
 
 echo -e "\nCreating puzzle description file"
 if ! puzzlefile; then
