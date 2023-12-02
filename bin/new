@@ -200,7 +200,6 @@ waiting () {
             timeleft
             echo -ne "\r" # beginning of line
             sleep 3
-            # tput cuu1 # move cursor up by one line
             tput el # clear the line
         done
         echo  # avoid writing through the timeleft line
