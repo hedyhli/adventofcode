@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-#
+
+# paths:
 # for each day: /year/day, eg: 2020/01/
 # in the dir:
 #   - code (template files in $skelpath, with YEAR and DAY replaced to
@@ -47,53 +48,54 @@
 # questions/comments? open an issue or a ticket on the git forge you got this
 # source from, or drop me an email (also found on my profile of the git forge
 # you got this source from)
-#
-# BEGIN...unlinted, jumbled mess of bash code...
-#
 
 
-# export LC_TIME=en_US.UTF8  # because month names are hardcoded in english :)
+# Months names are hard coded in english, set this and adjust timezone variable
+# if otherwise.
+# export LC_TIME=en_US.UTF8
 export TZ=UTC
+progname="$(basename $0)" 
 
-# print the help message
 printhelp () {
     cat <<END
-usage: $(basename $0) [ -h|--help ] [ -n ] [day] [year]
+usage: $progname [ -h|--help ] [ -n ] [day] [year]
 
     initializes directory \$aocroot/year/day with files in \$skelpath/*
     and puzzle description, input.txt files depending on current time
 
+    => $progname 02 2020
+    => $progname -n 24 2015
+
 options:
     -h/--help
 
-    -n:          dry-run (run script but don't modify any files
-                 or create new ones)
+    -n:     dry-run (run script but don't modify any files
+            or create new ones)
 
 arguments:
-    day:         *zero padded*, two-digit  (eg: 02 (for day 2))
-    year:        4-digit year              (eg: 2017)
+    day:    *zero padded*, two-digit  (eg: 02 (for day 2))
+    year:   4-digit year              (eg: 2017)
 
-current env:
-    \$aocroot:  (AOCROOT variable)       $aocroot  (defaults to CWD)
-    \$skelpath: (AOC_SKELPATH variable)  $skelpath (defaults to \$aocroot/skel/)
+customization: (env)
+    \$AOCROOT:      root git dir of AoC repo (defaults to CWD)
+     current:      '$aocroot'
 
-    today is $(printtoday)
+    \$AOC_SKELPATH: path to template files (defaults to \$AOCROOT/skel/)
+     current:      '$skelpath'
 
-customization: (env variables)
-    \$AOCROOT:       root git dir of AoC repo  (eg: \$HOME/src/adventofcode)
-    \$AOC_SKELPATH:  path to template files    (eg: \$HOME/src/adventofcode/skel)
+today is $(printtoday)
 
 ***
-further documentation? check the source code :P
+further documentation? check the source code
 END
 }
 
 # print today is 'year/day' format. If current month is not december: then
-# 'year mon day' format
+# 'year-month-day' format
 printtoday () {
     echo -n "$today_year"
-    if ! [ $today_month = Dec ]; then
-        echo -n " $today_month "
+    if ! [ $today_month = 12 ]; then
+        echo -n "-$today_month-"
     else
         echo -n "/"
     fi
@@ -112,10 +114,10 @@ year=$(date '+%Y')
 day=$(date '+%d')
 today_year=$year
 today_day=$day
-today_month=$(date '+%b')
+today_month=$(date '+%m')
 
-skelpath=$AOC_SKELPATH
-aocroot=$AOCROOT
+skelpath="$AOC_SKELPATH"
+aocroot="$AOCROOT"
 
 if [ -z "$aocroot" ]; then
     aocroot=$(dirname $PWD)
