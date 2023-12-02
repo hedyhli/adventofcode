@@ -53,6 +53,7 @@
 
 
 # export LC_TIME=en_US.UTF8  # because month names are hardcoded in english :)
+export TZ=UTC
 
 # print the help message
 printhelp () {
@@ -177,9 +178,8 @@ templatefiles () {
 # Keep waiting if it's not time yet. Return when puzzle has been released
 # or quit upon user request
 waiting () {
-    # export TZ=UTC
     now=$(date '+%s')
-    echo "ENV: selected event: $year-12-${day}T13:00:00"
+    echo "ENV: selected event: $year-12-${day}T05:00:00"
     echo "ENV: current time  : $(date '+%Y-%m-%dT%T')"
 
     if (( $now < $aoctime )); then
@@ -492,7 +492,7 @@ fi
 
 # Vamos >>> We're all set!
 dirpath=$aocroot/$year/$day
-export aoctime=$(date -d"$year-12-${day}T13:00:00" '+%s')
+export aoctime=$(date -d"$year-12-${day}T05:00:00" '+%s')
 
 echo "Printing env"
 envinfo
@@ -503,8 +503,8 @@ initdirs
 echo -e "\nCopying template files"
 templatefiles
 
-# echo -e "\nChecking local time"
-# waiting
+echo -e "\nChecking local time"
+waiting
 
 echo -e "\nCreating puzzle description file"
 if ! puzzlefile; then
