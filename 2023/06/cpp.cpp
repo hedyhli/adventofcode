@@ -8,6 +8,8 @@
 #include <vector>
 #include <iostream>
 #include <math.h>
+#include <iterator>
+#include <sstream>
 
 using namespace std;
 typedef long long ll;
@@ -21,6 +23,8 @@ typedef long long ll;
 #define println(X) cout<<X<<endl
 // #define showvec(a) for(int i=0;i<a.size();i++) cout<<a[i]<<' ';cout<<endl
 
+#define StreamMax numeric_limits<streamsize>::max()
+
 vector<int> times;
 vector<int> dists;
 int N;
@@ -29,28 +33,9 @@ int N;
 
 /** Read all integers in current line into vector V */
 void read_line(vector<int> &V) {
-    char c;
-
-    // Read until start of numbers
-    do { c = getchar(); } while (c != ':');
-    c = getchar();
-
-    // There are numbers
-    while (c != '\n') {
-        // Next number
-        while (c == ' ') {
-            c = getchar();
-        } 
-
-        string n = "";
-
-        // Read number
-        while (c != ' ' && c != '\n') {
-            n += c;
-            c = getchar();
-        }
-        V.push_back(stoi(n));
-    }
+    string line; getline(cin, line); istringstream S(line);
+    S.ignore(StreamMax, ':');
+    copy(istream_iterator<int>(S), istream_iterator<int>(), back_inserter(V));
 }
 
 /** Concatenate all ints in vector V into a single (large) long long */
