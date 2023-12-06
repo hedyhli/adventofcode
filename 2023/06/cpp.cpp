@@ -1,8 +1,14 @@
 /* Copyright all wrongs deserved */
 /* C++17
+ *
+ * https://adventofcode.com/2023/day/6
  */
 
-#include <bits/stdc++.h>
+#include <string>
+#include <vector>
+#include <iostream>
+#include <math.h>
+
 using namespace std;
 typedef long long ll;
 /* int: -2^31 .. 2^31-1  (2E+9) (32 bits)
@@ -12,13 +18,16 @@ typedef long long ll;
  */
 
 #define endl '\n'
-#define println(X) cout<<(X)<< endl
-#define showvec(a) for(int i=0;i<a.size();i++) cout<<a[i]<<' ';cout<<endl
+#define println(X) cout<<X<<endl
+// #define showvec(a) for(int i=0;i<a.size();i++) cout<<a[i]<<' ';cout<<endl
 
 vector<int> times;
 vector<int> dists;
 int N;
 
+/// parsing ///////////////////////////////////////////////////////////////////
+
+/** Read all integers in current line into vector V */
 void read_line(vector<int> &V) {
     char c;
 
@@ -44,6 +53,7 @@ void read_line(vector<int> &V) {
     }
 }
 
+/** Concatenate all ints in vector V into a single (large) long long */
 ll merge_ints(vector<int> &V) {
     string n = "";
     for (auto const &x : V)
@@ -51,16 +61,39 @@ ll merge_ints(vector<int> &V) {
     return stol(n);
 }
 
-int get_ways(ll time, ll dist) {
-    int w = 0;
+/// algorithm /////////////////////////////////////////////////////////////////
+
+/** Find first and last integer solution using bruteforce */
+int get_ways_bruteforce(ll time, ll dist) {
+    int last, first;
     for (ll hold = 1; hold < time; ++hold) {
-        if (hold * (time - hold) > dist)
-            ++w;
+        if (hold * (time - hold) > dist) {
+            first = hold;
+            break;
+        }
     }
-    return w;
+    for (ll hold = time-1; hold > 0; --hold) {
+        if (hold * (time - hold) > dist) {
+            last = hold;
+            break;
+        }
+    }
+    return last - first + 1;
 }
 
+/** Find the two roots using quadratic formula */
+int get_ways_formula(ll time, ll dist) {
+    double det = sqrt((double)(time*time - 4 * dist));
+    double root1 = ((double)time - det)/(double)2;
+    double root2 = ((double)time + det)/(double)2;
+    return ceil(root2) - 1 - floor(root1);
+}
+
+/** The selected algorithm to use */
+int get_ways(ll time, ll dist) { return get_ways_formula(time, dist); }
 int get_ways(int time, int dist) { return get_ways((ll)time, (ll)dist); }
+
+/// solution //////////////////////////////////////////////////////////////////
 
 void part1() {
     int prod = 1;

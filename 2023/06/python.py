@@ -13,49 +13,44 @@
 #     aocd 6 2023 | python3 python.py -
 #     pbpaste | python3 python.py -
 
-from functools import reduce
+import math
+
+
+def get_ways(time:int, dist:int) -> int:
+    """
+    Uses quadratic formula to get the number of integers between
+    roots.
+    """
+    det = math.sqrt(time**2 - 4 * dist)
+    root1 = (time - det)/2
+    root2 = (time + det)/2
+    return math.ceil(root2) - 1 - math.floor(root1);
 
 if __name__ == '__main__':
     import sys
     inputfn = sys.argv[1] if len(sys.argv) > 1 else "input.txt"
-
-    from aocd import submit
-
+    from aocd import submit  # noqa: ignore
     with open(0 if inputfn == '-' else \
               ('example.txt' if inputfn == 'e' else inputfn)) as f:
         lines = f.read().splitlines()
 
+
+    # parse
     times = [ int(i.strip()) for i in lines[0].split(':  ')[1].strip().split() ]
     dists = [ int(i.strip()) for i in lines[1].split(':  ')[1].strip().split() ]
 
     # part 1
-    prod = 1
-    for i in range(len(times)):
-        ways = 0
-        for hold in range(1, times[i]):
-            left = times[i] - hold
-            d = left * hold
-            if d > dists[i]:
-                ways += 1
-        prod *= ways
-
-    print(prod)
-    if inputfn == "input.txt":
-        submit(prod, "a", day=6, year=2023, reopen=False)
-
-
-    # part 2 setup
-    time = int(reduce(lambda x,y: str(x)+str(y), times, ''))
-    dist = int(reduce(lambda x,y: str(x)+str(y), dists, ''))
+    part1 = math.prod(get_ways(times[i], dists[i]) for i in range(len(times)))
 
     # part 2
-    ways = 0
-    for hold in range(1, time):
-        left = time - hold
-        d = left * hold
-        if d > dist:
-            ways += 1
+    time = int(''.join(str(t) for t in times))
+    dist = int(''.join(str(d) for d in dists))
+    part2 = get_ways(time, dist)
 
-    print(ways)
+    # check answer
+    print(part1)
     if inputfn == "input.txt":
-        submit(ways, "b", day=6, year=2023, reopen=False)
+        submit(part1, "a", day=6, year=2023, reopen=False)
+    print(part2)
+    if inputfn == "input.txt":
+        submit(part2, "b", day=6, year=2023, reopen=False)
