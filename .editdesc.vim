@@ -1,16 +1,16 @@
 " answers.md
-" let puzzlefile = expand("%:p")
-" let dir = strtrans(substitute(system('dirname '.puzzlefile), '\n\+$', '', ''))
-" exec 'e '.dir.'/answers.md'
-" normal ggdG
-" " set ma
-" set buftype=
-" exec 'r '.puzzlefile
-"
-" v/^Your puzzle answer was/d
-" normal ggdt`xjdt`x$xxk$xx
-" w
-" bd
+let puzzlefile = expand("%:p")
+let dir = strtrans(substitute(system('dirname '.puzzlefile), '\n\+$', '', ''))
+exec 'e '.dir.'/answers.md'
+normal ggdG
+" set ma
+set buftype=
+exec 'r '.puzzlefile
+
+v/^Your puzzle answer was/d
+normal ggdt`xjdt`x$xxk$xx
+w
+bd
 
 " puzzle.md
 g/^Your puzzle answer was/d
