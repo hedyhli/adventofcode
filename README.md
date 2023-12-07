@@ -32,6 +32,15 @@ the .jpg files are probably screenshots of Apple Shortcuts solutions (mostly
 2021), so they are in fact valid file types of solutions.
 
 as of writing:
+```
+  45 py
+  15 jpg
+  14 go
+   7 lua
+   4 cpp
+   2 sh
+   2 moon
+```
 
 **do you have a neat setup for input and submitting?**
 
