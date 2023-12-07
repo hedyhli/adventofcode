@@ -62,7 +62,7 @@ if __name__ == '__main__':
         ranks.append((get_rank(hand[0]), hand[1], hand[2], hand[3]))
 
     ranks.sort()
-    s = sum( (r+1) * p[2] for r, p in enumerate(ranks) )
+    s = sum((r+1) * p[2] for r, p in enumerate(ranks))
 
     print(s)
     if inputfn == "input.txt":
@@ -78,13 +78,16 @@ if __name__ == '__main__':
         q = [ strength2.index(i) for i in cards ]
 
         if cards != 'JJJJJ':
-            best = Counter(cards.replace('J', '')).most_common(1)[0][0]
+            common = c.most_common(2)
+            best = common[0][0]
+            if best == 'J':
+                best = common[1][0]
             c = Counter(cards.replace('J', best))
 
         ranks.append((get_rank(c), q, hand[2], cards))
 
     ranks.sort()
-    s = sum( (r+1) * p[2] for r, p in enumerate(ranks) )
+    s = sum((r+1) * p[2] for r, p in enumerate(ranks))
 
     print(s)
     if inputfn == "input.txt":
