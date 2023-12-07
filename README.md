@@ -10,7 +10,13 @@ repo](https://github.com/Starwort/advent-of-golf-2022)!
 
 long, modular solutions are always documented, but rarely (if not at all) unit-tested
 
-**does this have solutions in your favorite programming language?**
+**principles**
+
+- no custom library imports (only stdlib)
+- each puzzle is **standalone**. they can be run using the standard compiler/interpreter
+- standard I/O is used for input and output
+
+**does this have solutions in my favorite programming language?**
 
 take a look at the language usage breakdown, if the git forge you're reading
 this from supports it.
@@ -22,21 +28,19 @@ literate! cook up a oneliner to analyze my file types here...
 find 20?? ! -name '*.md' ! -name '*.txt' -type f | sed 's/.*\.//' | sort | uniq -c | sort -bnr
 ```
 
-😉
-
-I'm sure you'll find ways to improve mine
-
 the .jpg files are probably screenshots of Apple Shortcuts solutions (mostly
 2021), so they are in fact valid file types of solutions.
 
-**do I have a neat setup for input and submitting?**
+as of writing:
+
+**do you have a neat setup for input and submitting?**
 
 yeah, but not exactly neat
 
 - fetching puzzle description - https://github.com/scarvalhojr/aoc-cli
 - fetching input and submitting (for python) - https://pypi.org/project/advent-of-code-data/
 
-**do I have a neat script or templates which I use to create new directory structures?**
+**do you have a neat script or templates which you use to create new directory structures?**
 
 yup!
 
@@ -61,38 +65,7 @@ install 'dependencies' (lol)
 - install from `requirements.txt`
 - start solving new puzzles as they come, using `bin/new`
 
-**am I going to (eventually) do all the previous puzzles I had missed?**
+**are you going to (eventually) do all the previous puzzles?**
 
 perhaps.
 
-<details>
-<summary>the plan (in addition to 2022+ daily)</summary>
-
-- [x] 2020 (python) days 1-5
-- [ ] 2020 (python) days 6-10
-- [ ] 2020 (python) days 11-15
-- [ ] 2021 (python) days 1-5
-- [ ] 2020 (golang) days 1-5
-- [ ] 2020 (golang) days 6-10
-- [ ] 2020 (golang) days 11-15
-- [ ] 2021 (golang) days 1-5
-- [ ] 2021 (shell) days 1-5
-- [ ] 2020 (java) days 1-5
-- [ ] 2021 (python) days 6-10
-- [ ] 2021 (python) days 11-15
-- [ ] 2021 (golang) days 6-10
-- [ ] 2021 (golang) days 11-15
-- [ ] 2020 (shell) days 1-5
-- [ ] 2020 (lua) days 1-5
-- [ ] 2021 (lua) days 1-5
-
-- [ ] 2020 (python) days 16-20
-- [ ] 2020 (golang) days 16-20
-- [ ] 2020 (python) days 20-25
-- [ ] 2020 (java) days 16-20
-- [ ] 2020 (golang) days 20-25
-
-
-wow, you're still reading?
-
-</details>
