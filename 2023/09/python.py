@@ -27,8 +27,8 @@ if __name__ == '__main__':
     diffs = []
     for seq in lines:
         diff = [ seq ]
-        curd: list[int] = []
-        while not curd or any(c != 0 for c in curd):
+        curd: list[int] = [ 1 ]
+        while any(curd):
             curd = []
             prevs = diff[-1]
             prev = prevs[0]
