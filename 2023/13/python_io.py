@@ -1,22 +1,17 @@
 # https://adventofcode.com/2023/day/13
 
-from typing import Optional
-
-HORZ_S = 100
-VERT_S = 1
-
-def find_mirror(case: list[str], smudges = 0) -> Optional[int]:
+def find_mirror(case: list[str], smudges = 0) -> int:
     case_t = list(map(''.join, zip(*case)))
-    for m, c in ((HORZ_S, case), (VERT_S, case_t)):
-        for i in range(len(c)-1):
+    for m, c in ((100, case), (1, case_t)):
+        for i in range(1, len(c)):
             if sum(
                 sum(int(a != b) for a, b in zip(line1, line2))
-                for line1, line2 in zip(c[i+1:], c[i::-1])
+                for line1, line2 in zip(c[i:], c[i-1::-1])
             ) == smudges:
-                return m * (i+1)
+                return m * i
 
-    print(*case, sep='\n')
-    return None
+    raise ValueError
+    return 0
 
 with open(0) as f:
     cases = list(map(str.splitlines, f.read().split('\n\n')))
