@@ -11,10 +11,7 @@ def find_mirror(case: list[str], smudges = 0) -> int:
                 return m * i
 
     raise ValueError
-    return 0
 
-with open(0) as f:
-    cases = list(map(str.splitlines, f.read().split('\n\n')))
-
-for smudge in (0, 1):
-    print(sum(find_mirror(case, smudge) for case in cases))
+cases = list(map(str.splitlines, open(0).read().split('\n\n')))
+print(*(sum(find_mirror(case, smudge) for case in cases) for smudge in (0, 1)),
+      sep='\n')
