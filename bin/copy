@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+
+set -e
+progname=$(basename "$0")
+
+file="$1"
+
+if [ -z "$file" ]; then
+    cat <<END
+Usage: $progname fennel.fnl
+END
+    exit
+fi
+
+year=$(date '+%Y')
+day=$(date '+%d')
+
+skelpath="$AOC_SKELPATH"
+aocroot="$AOCROOT"
+
+if [ -z "$aocroot" ]; then
+    aocroot=$(dirname $PWD)
+fi
+if [ -z "$skelpath" ]; then
+    skelpath=$aocroot/skel
+fi
+
+echo "$year/$day/$file"
+mkdir -p "$aocroot/$year/$day"
+cp "$skelpath/$file" "$aocroot/$year/$day/$file"
