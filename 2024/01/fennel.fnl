@@ -1,4 +1,4 @@
-(local f (io.open "input.txt"))
+(local f (assert (io.open "input.txt")))
 
 (local left [])
 (local right [])

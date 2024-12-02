@@ -44,6 +44,6 @@
   (print (+ total-safe tolerate-1-bad)))
 
 
-(local f (io.open "input.txt"))
+(local f (assert (io.open "input.txt")))
 (main f)
 (f:close)
