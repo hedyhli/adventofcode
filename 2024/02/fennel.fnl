@@ -1,36 +1,49 @@
-(fn is-safe [row]
+(fn is-gradient [row]
+  "Either all increasing or all decreasing."
   (local inc (< (. row 1) (. row 2)))
-  (var return false)
-  (var i 2)
-  (while (and (not return) (<= i (length row)))
-    (local diff (- (. row i) (. row (- i 1))))
-    (local this-inc (> diff 0))
-    (when (or (not= this-inc inc) (not (<= 1 (math.abs diff) 3)))
-      (set return true))
-    (set i (+ 1 i)))
-  (not return))
+  (faccumulate [ok true
+                i 2 (length row)
+                &until (not ok)]
+    (= inc (< (. row (- i 1)) (. row i)))))
+
+(fn diff-within [lo hi row]
+  "Whether all absolute differences are >= lo and <= hi."
+  (faccumulate [ok true
+                i 2 (length row)
+                &until (not ok)]
+    (<= lo (math.abs (- (. row i) (. row (- i 1)))) hi)))
+
+(fn is-safe [row]
+  "Whether this single report is safe."
+  (and (is-gradient row) (diff-within 1 3 row)))
+
+(fn has-removable-level [row]
+  "Naively bruteforce whether removing a level makes the report safe."
+  (faccumulate [found false
+                remove 1 (length row)
+                &until found]
+    (is-safe (icollect [i level (ipairs row)]
+               (if (not= i remove) level)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(fn main [f]
+  (var total-safe 0)
+  (var tolerate-1-bad 0)
+
+  (each [line (f:lines)]
+    (local row (icollect [mat (string.gmatch line "%d+")] (tonumber mat)))
+    (local safe (is-safe row))
+    (if safe
+        (set total-safe (+ 1 total-safe))
+        ;; else
+        (when (has-removable-level row)
+          (set tolerate-1-bad (+ 1 tolerate-1-bad)))))
+
+  (print total-safe)
+  (print (+ total-safe tolerate-1-bad)))
+
 
 (local f (io.open "input.txt"))
-(var total-safe 0)
-(var tolerate-1-bad 0)
-
-(each [line (f:lines)]
-  (local row (icollect [mat (string.gmatch line "%d+")] (tonumber mat)))
-  (local safe (is-safe row))
-  (when safe
-    (set total-safe (+ 1 total-safe)))
-  (when (not safe)
-    (var passed false)
-    ;; Naively bruteforce which level to remove
-    (var remove 1)
-    (while (and (not passed) (<= remove (length row)))
-      (local check (icollect [_ level (ipairs row)] level))
-      (table.remove check remove)
-      (when (is-safe check)
-        (set passed true)
-        (set tolerate-1-bad (+ 1 tolerate-1-bad)))
-      (set remove (+ 1 remove)))))
-
-(print total-safe)
-(print (+ total-safe tolerate-1-bad))
+(main f)
 (f:close)
