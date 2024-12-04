@@ -20,7 +20,7 @@
               (when enable
                 (set sum2 (+ sum2 product))))))))
   (print sum)
-  (print sum2))  
+  (print sum2))
 
 (local INP "i")
 (local f (assert (io.open (if (= INP "s" ) "sample.txt" (= INP "i") "input.txt" INP))))
