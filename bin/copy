@@ -19,7 +19,7 @@ skelpath="$AOC_SKELPATH"
 aocroot="$AOCROOT"
 
 if [ -z "$aocroot" ]; then
-    aocroot=$(dirname $PWD)
+    aocroot=$PWD
 fi
 if [ -z "$skelpath" ]; then
     skelpath=$aocroot/skel
