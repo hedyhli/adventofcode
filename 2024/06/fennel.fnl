@@ -86,8 +86,22 @@
             (set exited true))
           ;;else
           (when (. (get-cell x y grid) :ob)
-            (set stop true)))))
+            (set stop true))))
+    )
   (values inc exited looping))
+
+(fn patrol-all [guard grid]
+  (var visits 0)
+  (var stop false)
+  (var loops false)
+  (while (not stop)
+    (local [inc exited looped] [(patrol guard grid)])
+    (set stop (or exited looped))
+    (set loops looped)
+    (set visits (+ visits inc))
+    (when (not exited)
+      (set-new-direction guard)))
+  (values visits loops))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (fn main [f]
@@ -115,22 +129,30 @@
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-  (var initial {:x guard.x :y guard.y :dir guard.dir})
-
-  (var visits 0)
-  (var stop false)
-  (while (not stop)
-    (local [inc exited _] [(patrol guard grid)])
-    (set stop exited)
-    (set visits (+ visits inc))
-    (when (not exited)
-      (set-new-direction guard)))
+  (local initial {:x guard.x :y guard.y :dir guard.dir})
+  (local [visits _] [(patrol-all guard grid)])
   (print visits)
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  (for [i 1 rows]
-    (for [j 1 rows]
-      (tset (get-cell i j grid) :visited false)))
+  (var options 0)
+  (for [j rows 1 -1]
+    (print j)
+    (for [i 1 rows]
+      (when (and
+             (not (. (get-cell i j grid) :ob))
+             (or (not= j initial.y) (not= i initial.x)))
+        (for [k 1 rows]
+          (for [l 1 rows]
+            (tset (get-cell k l grid) :visited false)
+            (tset (get-cell k l grid) :dir nil)))
+        (tset (get-cell i j grid) :ob true)
+        (local g {:x initial.x :y initial.y :dir initial.dir})
+        (local [_ loops] [(patrol-all g grid)])
+        (when loops
+          (set options (+ 1 options)))
+        (tset (get-cell i j grid) :ob false))))
+  (print "")
+  (print options)
 
   )
 
