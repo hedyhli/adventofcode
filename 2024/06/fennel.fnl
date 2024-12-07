@@ -8,6 +8,16 @@
 ;; top right is 10,10, top left is 1,1
 ;; coord (x, y) is at:
 ;; (. (. grid y) x)
+;;
+;; Possible approach for faster solution:
+;; - Patrolling:
+;;   Use a x-y and y-x map to get a list of y coordinates for a give x
+;;   coordinate and vice-versa, to quickly find the next obstacle.
+;;   See find-> and find-<
+;;   Find intersections of path segments (see) to compute the updated
+;;   visit-count value. This can be trivial because there can never be
+;;   two colinear segments without looping.
+;; - Brute-force search can be restricted to the visited path.
 
 (fn exiting? [guard rows]
   (or (and (= guard.x 0)    (= guard.dir :left))

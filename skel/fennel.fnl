@@ -1,6 +1,9 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(fn prn [num]
+  (print (string.format "%.0f" num)))
+
 (fn main [f]
   (each [line (f:lines)]
     ;; (each [mat (string.gmatch line "%d+")])
