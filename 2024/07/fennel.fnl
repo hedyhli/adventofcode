@@ -1,7 +1,10 @@
+;; 2 seconds total, for both parts, including compilation
 
 (fn try [want start have i]
   (if (> i (length have))
       (= want start)
+      (> start want) ;; Saves only 0.8 secs
+      false
       (or (try want (* start (. have i)) have (+ i 1))
           (try want (+ start (. have i)) have (+ i 1)))))
 
@@ -11,6 +14,8 @@
 (fn try2 [want start have i]
   (if (> i (length have))
       (= want start)
+      (> start want)
+      false
       (or (try2 want (* start (. have i)) have (+ i 1))
           (try2 want (+ start (. have i)) have (+ i 1))
           (try2 want (concat start (. have i)) have (+ 1 i)))))
