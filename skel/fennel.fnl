@@ -11,7 +11,7 @@
                         _ m (ipairs row)]
              (.. s (repr m))))))
 
-(fn clone [tab init]
+(fn clone-table [tab init]
   "(clone table (fn [it] it))"
   (icollect [_ row (ipairs tab)]
     (icollect [_ item (ipairs row)]

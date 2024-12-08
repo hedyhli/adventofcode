@@ -1,5 +1,3 @@
-;; can be refactored
-
 (fn Point [i j] {: i : j})
 
 (fn mark-1 [i j rows marked]
@@ -9,29 +7,24 @@
        (not (. (. marked i) j)))
       (do
         (tset (. marked i) j true)
-        (values 1 (not in-bounds)))
-      (values 0 (not in-bounds))))
+        (values 1 in-bounds))
+      (values 0 in-bounds)))
 
 (fn mark-antinodes [A B rows marked]
   "Determine antinodes, update `marked', and return the increase of unique locations."
   (var [a b c d] [A.i A.j B.i B.j])
-  (var [i1 j1 i2 j2] [0 0 0 0])
   (when (> a c)
     (set [a b c d] [c d a b]))
   (var dx (math.abs (- b d)))
   (local dy (math.abs (- a c)))
   (when (< b d)
     (set dx (- 0 dx)))
-  (set [j1 i1] [(+ b dx) (- a dy)])
-  (set [j2 i2] [(- d dx) (+ c dy)])
-  (local [inc1 _] [(mark-1 i1 j1 rows marked)])
-  (local [inc2 _] [(mark-1 i2 j2 rows marked)])
-  (+ inc1 inc2))
+  (+ (. [(mark-1 (- a dy) (+ b dx) rows marked)] 1)
+     (. [(mark-1 (+ c dy) (- d dx) rows marked)] 1)))
 
 (fn mark-antinodes2 [A B rows marked]
   "Determine antinodes, update `marked', and return the increase of unique locations."
   (var [a b c d] [A.i A.j B.i B.j])
-  (var [i1 j1 i2 j2] [0 0 0 0])
   (when (> a c)
     (set [a b c d] [c d a b]))
   (var dx (math.abs (- b d)))
@@ -42,17 +35,17 @@
   (var total (+ (. [(mark-1 a b rows marked)] 1)
                 (. [(mark-1 c d rows marked)] 1)))
 
-  (var stop false)
-  (var inc 1)
-  (while (not stop)
+  (var continue true)
+  (var inc 0)
+  (while continue
     (set [b a] [(+ b dx) (- a dy)])
-    (set [inc stop] [(mark-1 a b rows marked)])
+    (set [inc continue] [(mark-1 a b rows marked)])
     (set total (+ total inc)))
 
-  (set stop false)
-  (while (not stop)
+  (set continue true)
+  (while continue
     (set [d c] [(- d dx) (+ c dy)])
-    (set [inc stop] [(mark-1 c d rows marked)])
+    (set [inc continue] [(mark-1 c d rows marked)])
     (set total (+ total inc)))
 
   total)
