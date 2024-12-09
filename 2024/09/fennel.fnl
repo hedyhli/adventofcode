@@ -70,13 +70,10 @@
         (when (<= qtr.len ptr.len)
           (set found true)
           (tset qtr :is-gap true)
-          (local new-qtr {:len qtr.len
-                          :is-gap false
-                          :idx qtr.idx
-                          :next ptr})
+          (local new-qtr {:len qtr.len :is-gap false :idx qtr.idx :next ptr})
           (tset prev-ptr :next new-qtr)
           (tset ptr :len (- ptr.len qtr.len))
-          ;;This produces an incorrect result??
+          ;; TODO: Why doesn't the below work?
           ;; (when (< qtr.len ptr.len)  ;; update self
           ;;   (tset ptr :len (- ptr.len qtr.len)))
           ;; (when (= qtr.len ptr.len)  ;; detach self
