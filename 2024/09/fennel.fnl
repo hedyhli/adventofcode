@@ -1,22 +1,3 @@
-
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(fn prn [num]
-  (print (string.format "%.0f" num)))
-
-(fn print-table [grid repr]
-  "(print-table table (fn [m] (tostring m)))"
-  (each [_ row (ipairs grid)]
-    (print (accumulate [s ""
-                        _ m (ipairs row)]
-             (.. s (repr m))))))
-
-(fn clone-table [tab init]
-  "(clone table (fn [it] it))"
-  (icollect [_ row (ipairs tab)]
-    (icollect [_ item (ipairs row)]
-      (init item))))
-
 (fn s-index [string i]
   (tonumber (string.sub string i i)))
 
@@ -58,11 +39,11 @@
   checksum)
 
 (fn part2 [line]
-  (local start {})
+  (local start {}) ;; not a real node
   (var ptr start)
   (var idx 0)
   (var is-gap false)
-  (local list [])
+  (local list []) ;; non-gaps
   (for [i 1 (length line)]
     (local len (s-index line i))
     (local this {: len : idx : is-gap})
@@ -75,7 +56,7 @@
     (set is-gap (not is-gap)))
 
   (var qtr (. list (length list))) ;; to be moved
-  (set ptr start) ;; to find the adequate gaps
+  (set ptr start) ;; to find the first adequate gap
 
   (for [q (length list) 2 -1]
     (local qtr (. list q))
@@ -110,15 +91,15 @@
     (when (not ptr.is-gap)
       (for [i 0 (- ptr.len 1)]
         (set checksum (+ checksum (* ptr.idx (+ disk-idx i))))))
-    (set disk-idx (+ disk-idx ptr.len))
-    )
-  (when (not= checksum 6432818997306)
+    (set disk-idx (+ disk-idx ptr.len)))
+
+  (when (not= checksum 6431472344710)
     (print "incorrect!"))
   checksum)
 
 (fn main [f]
   (local line (f:read))
-  ;;(print (part1 line))
+  (print (part1 line))
   (print (part2 line)))
 
 (local INP "i")
