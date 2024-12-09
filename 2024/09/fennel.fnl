@@ -69,7 +69,6 @@
     (when is-gap
       (set idx (+ 1 idx)))
     (tset ptr :next this)
-    (tset this :prev ptr)
     (set ptr this)
     (when (not is-gap)
       (table.insert list this))
@@ -81,28 +80,26 @@
   (for [q (length list) 2 -1]
     (local qtr (. list q))
     (set ptr start)
+    (var prev-ptr ptr)
     (var found false)
     (while (and (not found) (not= qtr ptr.next))
+      (set prev-ptr ptr)
       (set ptr ptr.next)
       (when ptr.is-gap
         (when (<= qtr.len ptr.len)
           (set found true)
           (tset qtr :is-gap true)
-
           (local new-qtr {:len qtr.len
                           :is-gap false
                           :idx qtr.idx
-                          :next ptr
-                          :prev ptr.prev})
-
-          (tset ptr.prev :next new-qtr)
-
-          (when (< qtr.len ptr.len)  ;; update self
-            (tset ptr :len (- ptr.len qtr.len))
-            (tset ptr :prev new-qtr))
-          (when (= qtr.len ptr.len)  ;; detach self
-            (tset ptr.next :prev new-qtr)
-            (tset new-qtr :next ptr.next))
+                          :next ptr})
+          (tset prev-ptr :next new-qtr)
+          (tset ptr :len (- ptr.len qtr.len))
+          ;;This produces an incorrect result??
+          ;; (when (< qtr.len ptr.len)  ;; update self
+          ;;   (tset ptr :len (- ptr.len qtr.len)))
+          ;; (when (= qtr.len ptr.len)  ;; detach self
+          ;;   (tset new-qtr :next ptr.next))
           ))))
 
   (var checksum 0)
@@ -115,8 +112,8 @@
         (set checksum (+ checksum (* ptr.idx (+ disk-idx i))))))
     (set disk-idx (+ disk-idx ptr.len))
     )
-  (when (= checksum 6432818997306)
-    (print "same..."))
+  (when (not= checksum 6432818997306)
+    (print "incorrect!"))
   checksum)
 
 (fn main [f]
