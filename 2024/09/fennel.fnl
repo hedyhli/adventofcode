@@ -57,9 +57,72 @@
       (set disk-idx (+ 1 disk-idx))))
   checksum)
 
+(fn part2 [line]
+  (local start {})
+  (var ptr start)
+  (var idx 0)
+  (var is-gap false)
+  (local list [])
+  (for [i 1 (length line)]
+    (local len (s-index line i))
+    (local this {: len : idx : is-gap})
+    (when is-gap
+      (set idx (+ 1 idx)))
+    (tset ptr :next this)
+    (tset this :prev ptr)
+    (set ptr this)
+    (when (not is-gap)
+      (table.insert list this))
+    (set is-gap (not is-gap)))
+
+  (var qtr (. list (length list))) ;; to be moved
+  (set ptr start) ;; to find the adequate gaps
+
+  (for [q (length list) 2 -1]
+    (local qtr (. list q))
+    (set ptr start)
+    (var found false)
+    (while (and (not found) (not= qtr ptr.next))
+      (set ptr ptr.next)
+      (when ptr.is-gap
+        (when (<= qtr.len ptr.len)
+          (set found true)
+          (tset qtr :is-gap true)
+
+          (local new-qtr {:len qtr.len
+                          :is-gap false
+                          :idx qtr.idx
+                          :next ptr
+                          :prev ptr.prev})
+
+          (tset ptr.prev :next new-qtr)
+
+          (when (< qtr.len ptr.len)  ;; update self
+            (tset ptr :len (- ptr.len qtr.len))
+            (tset ptr :prev new-qtr))
+          (when (= qtr.len ptr.len)  ;; detach self
+            (tset ptr.next :prev new-qtr)
+            (tset new-qtr :next ptr.next))
+          ))))
+
+  (var checksum 0)
+  (var disk-idx 0)
+  (set ptr start)
+  (while (not= nil ptr.next)
+    (set ptr ptr.next)
+    (when (not ptr.is-gap)
+      (for [i 0 (- ptr.len 1)]
+        (set checksum (+ checksum (* ptr.idx (+ disk-idx i))))))
+    (set disk-idx (+ disk-idx ptr.len))
+    )
+  (when (= checksum 6432818997306)
+    (print "same..."))
+  checksum)
+
 (fn main [f]
   (local line (f:read))
-  (print (part1 line)))
+  ;;(print (part1 line))
+  (print (part2 line)))
 
 (local INP "i")
 (local f (assert (io.open (if (= INP "s" ) "sample.txt" (= INP "i") "input.txt" INP))))
