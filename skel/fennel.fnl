@@ -22,7 +22,6 @@
     ;; (each [mat (string.gmatch line "%d+")])
     ))
 
-(local INP "s")
-(local f (assert (io.open (if (= INP "s" ) "sample.txt" (= INP "i") "input.txt" INP))))
-(main f)
-(f:close)
+(local INP :s)
+(with-open [f (io.open (if (= INP :s) "sample.txt" (= INP :i) "input.txt" INP))]
+  (main f))
