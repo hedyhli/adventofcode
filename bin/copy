@@ -28,3 +28,5 @@ fi
 echo "$year/$day/$file"
 mkdir -p "$aocroot/$year/$day"
 cp "$skelpath/$file" "$aocroot/$year/$day/$file"
+touch "$aocroot/$year/$day/input.txt"
+touch "$aocroot/$year/$day/sample.txt"
