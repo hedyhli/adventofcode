@@ -6,7 +6,7 @@
 
 (local cache {})
 
-(fn blink-1 [stone times]
+(fn blink [stone times]
   (local key (string.format "%d,%d" stone times))
   (fn save [x] (tset cache key x) x)
   (local hit (. cache key))
@@ -15,14 +15,14 @@
       (= times 0)
       (save 1)
       (= stone 0)
-      (save (blink-1 1 (- times 1)))
+      (save (blink 1 (- times 1)))
       (= 0 (% (length (tostring stone)) 2))
       (do
         (local (a b) (split stone))
-        (save (+ (blink-1 a (- times 1))
-                 (blink-1 b (- times 1)))))
+        (save (+ (blink a (- times 1))
+                 (blink b (- times 1)))))
       ;; else
-      (save (blink-1 (* 2024 stone) (- times 1)))))
+      (save (blink (* 2024 stone) (- times 1)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (fn prn [num]
@@ -33,10 +33,10 @@
                   (tonumber mat)))
   (local total (accumulate [t 0
                             _ stone (ipairs stones)]
-                 (+ t (blink-1 stone 25))))
+                 (+ t (blink stone 25))))
   (local total2 (accumulate [t 0
                             _ stone (ipairs stones)]
-                  (+ t (blink-1 stone 75))))
+                  (+ t (blink stone 75))))
   (print total)
   (prn total2))
 
