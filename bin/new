@@ -409,7 +409,7 @@ puzzleanswers () {
 # save input data at input.txt, using aocd
 inputfile () {
     if [[ -e $dirpath/input.txt ]]; then
-        if [ "$(wc -l $dirpath/input.txt | cut -d " " -f1)" = 0 ]; then
+        if [ -z "$(head -n1 $dirpath/input.txt)" ]; then
             echo WARNING: input.txt exists but is empty. It will be regenerated
         else
             echo WARNING: input.txt exists and is non-empty. It will be left untouched
