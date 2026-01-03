@@ -28,18 +28,19 @@ literate! cook up a oneliner to analyze my file types here...
 find 20?? ! -name '*.md' ! -name '*.txt' -type f | sed 's/.*\.//' | sort | uniq -c | sort -bnr
 ```
 
-the .jpg files are probably screenshots of Apple Shortcuts solutions (mostly
+the .jpg files are screenshots of Apple Shortcuts solutions (mostly
 2021), so they are in fact valid file types of solutions.
 
 as of writing:
 ```
-  45 py
+  53 py
   15 jpg
-  14 go
+  14 fnl
+   8 cpp
    7 lua
-   4 cpp
-   2 sh
    2 moon
+   2 go
+   1 elm
 ```
 
 **do you have a neat setup for input and submitting?**
